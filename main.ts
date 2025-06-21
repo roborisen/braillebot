@@ -16,7 +16,6 @@ namespace braillebot {
     const greenPin = DigitalPin.P14
     const bluePin = DigitalPin.P15
 
-
     const VEML6040_ADDR = 0x10
 
     const BLACK_THRESHOLD = 500
@@ -736,6 +735,9 @@ namespace braillebot {
         }
     }
 
+    function checkGrid(): boolean {
+        return (leftValue > BLACK_THRESHOLD && rightValue > BLACK_THRESHOLD)
+    }
 
     function gripperOpen(mode: boolean): void {
         if (mode) {
@@ -952,6 +954,68 @@ namespace braillebot {
             }
         }
     })
+
+
+
+    control.inBackground(function () {
+        while (true) {
+
+            // 큐브 연결 여부 판단 (MakeCode에서는 RX 라인 상태 확인이 불가하므로 timeout 대체)
+            let status1 = false
+            let status2 = false
+
+            if (!status1 || !status2) {
+                if (tracking) {
+                    tracking = false
+                    basic.pause(20)
+                    motorSpeedControl(0, 0)
+                }
+                // RGB LED 모두 끄기
+                pins.digitalWritePin(DigitalPin.P13, 0)
+                pins.digitalWritePin(DigitalPin.P14, 0)
+                pins.digitalWritePin(DigitalPin.P15, 0)
+
+                allConnected = false
+            } else {
+                allConnected = true
+            }
+
+            serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
+
+            // 명령 수신 및 처리
+            let data = serial.readBuffer(3)
+            let cmd = data.getUint8(0)
+
+            if (cmd == GCUBE_REQ_LINEBOARD_REBOOT) {
+                control.reset()
+            } else if (cmd == GCUBE_GET_BOARD_ID) {
+                if (tracking) {
+                    tracking = false
+                    basic.pause(20)
+                }
+                direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left");
+                basic.pause(30)
+            }
+
+            serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
+
+            let data2 = serial.readBuffer(3)
+            let cmd2 = data2.getUint8(0)
+
+            if (cmd2 == GCUBE_REQ_LINEBOARD_REBOOT) {
+                control.reset()
+            } else if (cmd2 == GCUBE_GET_BOARD_ID) {
+                if (tracking) {
+                    tracking = false
+                    basic.pause(20)
+                }
+                direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right");
+                basic.pause(30)
+            }
+        }
+    })
+
+
 
 
 
