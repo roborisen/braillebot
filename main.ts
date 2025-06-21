@@ -34,8 +34,10 @@ namespace braillebot {
 
     // PID 변수
     let setpoint = 0
-    let pin_input = 0
-    let pin_output = 0
+    let pid_input = 0
+    let pid_output = 0
+    let prevInput = 0
+    let integral = 0
     let Kp = 3.5
     let Ki = 0.0
     let Kd = 0.2
@@ -94,12 +96,23 @@ namespace braillebot {
     const BLACK_KEY = 9
     const WHITE_KEY = 10
 
+    const GCUBE_SET_LINEBOARD_SENSOR_DATA = 0x12 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_SPEED = 0x13 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_MOVE = 0x14 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_ROTATE = 0x15 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_MOVETOCOLOR = 0x16 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_ROTATETOLINE = 0x17 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_GRIPPER = 0x18 // ~ 2024-11-22
+    const GCUBE_REQ_LINEBOARD_MOVETOGRID = 0x19 // ~ 2024-11-26
+    const GCUBE_REQ_LINEBOARD_MELODY = 0x1B // ~ 2025-05-29
+    const GCUBE_REQ_LINEBOARD_REBOOT = 0x1E // ~ 2025-05-05
 
-    serial.redirect(SerialPin.P1, SerialPin.P2, 115200)
+
+    serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
     serial.setRxBufferSize(10)
     serial.setTxBufferSize(10)
 
-
+    
 
     function veml6040_init() {
         const config = pins.createBuffer(3)
@@ -445,11 +458,11 @@ namespace braillebot {
 
         if (whitecheck) {
             // EEPROM 대신 settings 사용
-            settings.writeNumber("redBalance", rv)
-            settings.writeNumber("greenBalance", gv)
-            settings.writeNumber("blueBalance", bv)
-            settings.writeNumber("leftBalance", ls)
-            settings.writeNumber("rightBalance", rs)
+            //settings.writeNumber("redBalance", rv)
+            //settings.writeNumber("greenBalance", gv)
+            //settings.writeNumber("blueBalance", bv)
+            //settings.writeNumber("leftBalance", ls)
+            //settings.writeNumber("rightBalance", rs)
 
             redBalance = rv
             greenBalance = gv
@@ -468,11 +481,17 @@ namespace braillebot {
     function checkWhiteBalance(mode: number) {
         if (mode == 0) {
             // 초기 셋업 시 저장된 값 불러오기
-            let rv = settings.readNumber("redBalance")
-            let gv = settings.readNumber("greenBalance")
-            let bv = settings.readNumber("blueBalance")
-            let ls = settings.readNumber("leftBalance")
-            let rs = settings.readNumber("rightBalance")
+            //let rv = settings.readNumber("redBalance")
+            //let gv = settings.readNumber("greenBalance")
+            //let bv = settings.readNumber("blueBalance")
+            //let ls = settings.readNumber("leftBalance")
+            //let rs = settings.readNumber("rightBalance")
+
+            let rv = 0;
+            let gv = 0;
+            let bv = 0;
+            let ls = 0;
+            let rs = 0;
 
             if (rv == 0 || gv == 0 || bv == 0) {
                 // white balance 수동 요청
@@ -484,7 +503,7 @@ namespace braillebot {
                     else pins.digitalWritePin(DigitalPin.P13, 1) // RED off
                     basic.pause(500)
                 }
-                showColor(3) // BLUE_KEY 대체
+                showColor(BLUE_KEY) // BLUE_KEY 대체
                 doBalance(0)
             } else {
                 redBalance = rv
@@ -512,7 +531,7 @@ namespace braillebot {
                         else pins.digitalWritePin(DigitalPin.P13, 1)
                         basic.pause(500)
                     }
-                    showColor(3)
+                    showColor(BLUE_KEY)
                     doBalance(1)
                 }
                 balanceCount = 0
@@ -521,10 +540,112 @@ namespace braillebot {
     }
 
 
+    function computePID() {
+        let error = setpoint - pid_input
+        integral += error
+        let derivative = pid_input - prevInput
+        pid_output = Kp * error + Ki * integral - Kd * derivative
+        pid_output = Math.constrain(pid_output, -1 * deviation, deviation)
+        prevInput = pid_input
+    }
+
+    function direct_send_gcube(p: number[], serialPort: String) {
+        const buffer = pins.createBufferFromArray(p)
+        serial.writeBuffer(buffer)
+        basic.pause(1)
+    }
+
+    function get_iv(cmd: number): number {
+        return Math.floor(cmd / 16) + (cmd & 0x0F) * 16
+    }
+
+    function direct_cube_speed_control(motor_speed: number, colorkey: number, distance: number, isRightCube: boolean) {
+        if (motor_speed < -100) motor_speed = -100
+        else if (motor_speed > 100) motor_speed = 100
+
+        const config = pins.createBuffer(3)
+        config.setUint8(0, 0x00)           // 레지스터 주소 0x00
+
+        let buffer = pins.createBuffer(10)
+        buffer.setUint8(0, GCUBE_REQ_LINEBOARD_SPEED)
+        buffer.setUint8(1, get_iv(GCUBE_REQ_LINEBOARD_SPEED))
+        buffer.setUint8(2, 0)
+        buffer.setUint8(3, motor_speed)  // signed
+        buffer.setUint8(4, colorkey)
+        buffer.setUint8(5, distance)
+        buffer.setUint8(6, 0)
+        buffer.setUint8( 7, 0)
+        buffer.setUint8(8, 0)
+        buffer.setUint8(9, 0)
+
+        if (isRightCube) {
+            serial.redirect(SerialPin.P12, SerialPin.P8, BaudRate.BaudRate115200)
+        } else {
+            serial.redirect(SerialPin.P2, SerialPin.P1, BaudRate.BaudRate115200)
+        }
+
+        serial.writeBuffer(buffer)
+    }
+
+
+    function direct_cube_move_control(motor_speed: number, robot_distance: number, serialPort: String) {
+        if (robot_distance < 0) {
+            motor_speed = motor_speed * -1
+        }
+        robot_distance = Math.abs(robot_distance)
+        if (robot_distance > 200) {
+            robot_distance = 200
+        }
+        direct_send_gcube([GCUBE_REQ_LINEBOARD_MOVE, get_iv(GCUBE_REQ_LINEBOARD_MOVE), 0, motor_speed, robot_distance, 0, 0, 0, 0, 0], serialPort)
+    }
+
+    function direct_cube_rotate_control(motor_speed: number, robot_angle: number, serialPort: String) {
+        if (robot_angle < 0) {
+            motor_speed = motor_speed * -1
+        }
+        robot_angle = Math.abs(robot_angle)
+        if (robot_angle > 180) {
+            robot_angle = 180
+        }
+        direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, motor_speed, robot_angle, 0, 0, 0, 0, 0], serialPort)
+    }
+
+    function direct_cube_melody_control(melody_number: number, m1: number, m2: number, m3: number, serialPort: String) {
+        direct_send_gcube([GCUBE_REQ_LINEBOARD_MELODY, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), melody_number, m1, m2, m3, 0, 0, 0, 0], serialPort)
+    }
 
 
 
+    function motorSpeedControl(leftSpeed: number, rightSpeed: number) {
+        if (Math.abs(leftOld - leftSpeed) > 1) {
+            direct_cube_speed_control(-1 * leftSpeed, colorkey, objectGap, false)
+            leftOld = leftSpeed
+        }
+        if (Math.abs(rightOld - rightSpeed) > 1) {
+            direct_cube_speed_control(rightSpeed, colorkey, objectGap, true)
+            rightOld = rightSpeed
+        }
+    }
 
+    function moveRobot(speed: number, distance: number) {
+        direct_cube_move_control(speed, distance, "right") // G2
+        direct_cube_move_control(-1 * speed, distance, "left") // G1
+
+        if (Math.abs(speed) >= 10) {
+            let delayTime = Math.idiv(10000 * Math.abs(distance), Math.abs(speed))
+            basic.pause(delayTime + 100)
+        }
+    }
+
+    function rotateRobot(speed: number, angle: number) {
+        direct_cube_rotate_control(-1 * speed, angle, "right") // G2
+        direct_cube_rotate_control(-1 * speed, angle, "left") // G1
+
+        if (Math.abs(speed) >= 10) {
+            let delayTime = Math.idiv(667 * Math.abs(angle), Math.abs(speed))
+            basic.pause(delayTime + 50)
+        }
+    }
 
 
 
