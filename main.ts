@@ -106,6 +106,9 @@ namespace braillebot {
     const GCUBE_REQ_LINEBOARD_MOVETOGRID = 0x19 // ~ 2024-11-26
     const GCUBE_REQ_LINEBOARD_MELODY = 0x1B // ~ 2025-05-29
     const GCUBE_REQ_LINEBOARD_REBOOT = 0x1E // ~ 2025-05-05
+    const GCUBE_CONTROL_COMMAND = 0x1F // ~ 2024-12-14
+    const GCUBE_GET_BOARD_ID = 0x10 // 보드의 ID 값 확인 요청
+    const GCUBE_LINE_BOARD_ID = 0x72 // 자동차형 모델 큐브 2개에 꽂혀 동작하는 트레이싱 전용 보드 ID : 0x72 ~ 2024-10-08
 
 
     serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
@@ -644,6 +647,245 @@ namespace braillebot {
         if (Math.abs(speed) >= 10) {
             let delayTime = Math.idiv(667 * Math.abs(angle), Math.abs(speed))
             basic.pause(delayTime + 50)
+        }
+    }
+
+
+    function wait_for_lineboard_cube_connected(mode: number) {
+        let rcvData: number[] = [0, 0, 0]
+        let allConnected = 0
+
+        // P0 RX (Cube 1), P2 RX (Cube 2)
+        pins.setPull(DigitalPin.P0, PinPullMode.PullUp)
+        let pinState = pins.digitalReadPin(DigitalPin.P0)
+        if (pinState == 1) {
+            direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
+        }
+        pins.setPull(DigitalPin.P2, PinPullMode.PullUp)
+        pinState = pins.digitalReadPin(DigitalPin.P2)
+        if (pinState == 1) {
+            direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "right")
+        }
+
+        serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
+        let buf = serial.readBuffer(3)
+        for (let i = 0; i < 3; i++) {
+            rcvData[i] = buf.getUint8(i)  // 각 바이트를 배열에 복사
+        }
+
+        if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
+            direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
+            allConnected++
+        }
+
+        serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
+        buf = serial.readBuffer(3)
+        for (let i = 0; i < 3; i++) {
+            rcvData[i] = buf.getUint8(i)  // 각 바이트를 배열에 복사
+        }
+
+        if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
+            direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
+            allConnected++
+        }
+
+        if (allConnected >= mode) return
+    }
+
+
+    function rotateUntilDetectLine(direction: number): boolean {
+        let count = 0
+
+        if (direction == 0) {
+            motorSpeedControl(-35, 35) // turn left
+        } else {
+            motorSpeedControl(35, -35) // turn right
+        }
+
+        basic.pause(30)
+
+        for (count = 0; count < 40; count++) {
+            colorkey = detectColorKey()
+
+            if (colorkey == BLACK_KEY) {
+                motorSpeedControl(0, 0)
+                break
+            } else if (colorkey == ORANGE_KEY || colorkey == CYAN_KEY) {
+                motorSpeedControl(0, 0)
+                showColor(colorkey)
+                break
+            } else if (colorkey == GREEN_KEY) {
+                motorSpeedControl(0, 0)
+                showColor(GREEN_KEY)
+                break
+            }
+
+            // IR 센서 라인 감지
+            let lineValue = 0
+            if (direction == 1) {
+                lineValue = pins.map(pins.analogReadPin(AnalogPin.P3), leftBalance, 1023, 0, 1023)
+            } else {
+                lineValue = pins.map(pins.analogReadPin(AnalogPin.P4), rightBalance, 1023, 0, 1023)
+            }
+
+            if (lineValue > 500) {
+                motorSpeedControl(0, 0)
+                break
+            }
+
+            basic.pause(80)
+        }
+
+        basic.pause(200)
+
+        if (count == 40) {
+            motorSpeedControl(0, 0)
+            return false
+        } else {
+            showColor(0)
+            return true
+        }
+    }
+
+
+    function gripperOpen(mode: boolean): void {
+        if (mode) {
+            let detection_flag = false
+            motorSpeedControl(0, 0)
+            basic.pause(300)
+
+            moveRobot(baseSpeed, 9)
+            basic.pause(300)
+
+            pins.servoWritePin(AnalogPin.P16, 35)
+            basic.pause(300)
+
+            moveRobot(-1 * baseSpeed, 8)
+            basic.pause(300)
+
+            pins.servoWritePin(AnalogPin.P16, 90)
+            basic.pause(300)
+
+            rotateRobot(-50, 60)
+            detection_flag = rotateUntilDetectLine(0)
+
+            if (detection_flag) {
+                tracking = true
+            }
+        } else {
+            basic.pause(300)
+            pins.servoWritePin(AnalogPin.P16, 35)
+            basic.pause(300)
+        }
+    }
+
+
+    function gripperClose(mode: boolean): void {
+        if (mode) {
+            let detection_flag = false
+            motorSpeedControl(0, 0)
+            pins.servoWritePin(AnalogPin.P16, 35)
+            basic.pause(300)
+
+            moveRobot(baseSpeed, 9)
+            basic.pause(300)
+
+            for (let i = 40; i <= 90; i += 5) {
+                pins.servoWritePin(AnalogPin.P16, i)
+                basic.pause(100)
+            }
+
+            basic.pause(300)
+            moveRobot(-1 * baseSpeed, 8)
+            basic.pause(300)
+
+            rotateRobot(-50, 60)
+            detection_flag = rotateUntilDetectLine(0)
+
+            if (detection_flag) {
+                tracking = true
+            }
+
+        } else {
+            basic.pause(300)
+            for (let i = 40; i <= 90; i += 5) {
+                pins.servoWritePin(AnalogPin.P16, i)
+                basic.pause(100)
+            }
+            basic.pause(300)
+        }
+    }
+
+
+    function handleColor(color: number): void {
+        let detection_flag = false
+        showColor(color)
+
+        switch (color) {
+
+            case RED_KEY:
+                moveRobot(baseSpeed, move_deviation)
+                rotateRobot(baseSpeed, 55)
+                detection_flag = rotateUntilDetectLine(1)
+                if (MelodyMode) {
+                    direct_cube_melody_control(2, 0x2F, 0x33, 0, "left")
+                    basic.pause(1000)
+                }
+                if (detection_flag) tracking = true
+                break
+
+            case BLUE_KEY:
+                moveRobot(baseSpeed, move_deviation)
+                rotateRobot(-1 * baseSpeed, 55)
+                detection_flag = rotateUntilDetectLine(0)
+                if (MelodyMode) {
+                    direct_cube_melody_control(2, 0x2F, 0x2C, 0, "left")
+                    basic.pause(1000)
+                }
+                if (detection_flag) tracking = true
+                break
+
+            case GREEN_KEY:
+                motorSpeedControl(0, 0)
+                basic.pause(100)
+                if (MelodyMode) {
+                    direct_cube_melody_control(2, 0x34, 0x34, 0, "left")
+                    basic.pause(1000)
+                    MelodyMode = false
+                }
+                break
+            case YELLOW_KEY:
+                moveRobot(baseSpeed, 2)
+                rotateRobot(-50, 90)
+                detection_flag = rotateUntilDetectLine(0)
+                if (MelodyMode) {
+                    direct_cube_melody_control(2, 0x2F, 0x2F, 0, "left")
+                    basic.pause(1000)
+                }
+                if (detection_flag) tracking = true
+                break
+
+            case ORANGE_KEY:
+                blindColor = 42
+                tracking = true
+                break
+
+            case MAGENTA_KEY:
+                gripperClose(true)
+                break
+
+            case PINK_KEY:
+                gripperOpen(true)
+                break
+
+            case CYAN_KEY:
+                blindColor = 42
+                MelodyMode = true
+                tracking = true
+                break
+
+            default:
+                break
         }
     }
 
