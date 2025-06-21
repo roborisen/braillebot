@@ -1046,10 +1046,10 @@ namespace braillebot {
     }
 
 
-
-
-
-
+    //% block="현재 Color Key 값"
+    function getColorKey(): number {
+        return colorkey
+    }
 
 
 
