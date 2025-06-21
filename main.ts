@@ -8,13 +8,12 @@
 namespace braillebot {
      
     // 핀 설정
-    const leftIR = AnalogPin.P3     // 예시: IR 센서 왼쪽
-    const rightIR = AnalogPin.P4    // 예시: IR 센서 오른쪽
-    const servoPin = AnalogPin.P16 //RC Servo motor
 
     const redPin = DigitalPin.P13
     const greenPin = DigitalPin.P14
     const bluePin = DigitalPin.P15
+
+    const servoPin = AnalogPin.P16
 
     const VEML6040_ADDR = 0x10
 
@@ -42,7 +41,6 @@ namespace braillebot {
 
 
     let colorCount = 0
-    let sonicCount = 3
     let lineExist = 0
 
 
@@ -73,15 +71,6 @@ namespace braillebot {
     let gb = 0
     let br = 0
     let bg = 0
-    let At = 0
-    let Bt = 0
-    let Ct = 0
-    let Dt = 0
-    let Et = 0
-    let Ft = 0
-    let Gt = 0
-    let Ht = 0
-    let It = 0
 
     const RED_KEY = 1 // AUTO
     const GREEN_KEY = 2
@@ -112,7 +101,6 @@ namespace braillebot {
     serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
     serial.setRxBufferSize(10)
     serial.setTxBufferSize(10)
-
     
 
     function veml6040_init() {
@@ -435,8 +423,8 @@ namespace braillebot {
                 whitecheck = false
             }
 
-            let ll = pins.analogReadPin(leftIR)
-            let rr = pins.analogReadPin(rightIR)
+            let ll = pins.analogReadPin(AnalogPin.P3)
+            let rr = pins.analogReadPin(AnalogPin.P4)
             rv += red
             gv += green
             bv += blue
@@ -489,12 +477,12 @@ namespace braillebot {
 
             if (rv == 0 || gv == 0 || bv == 0) {
                 // white balance 수동 요청
-                pins.digitalWritePin(DigitalPin.P13, 1) // RED on
-                pins.digitalWritePin(DigitalPin.P14, 1) // GREEN on
-                pins.digitalWritePin(DigitalPin.P15, 1) // BLUE on
+                pins.digitalWritePin(redPin, 1) // RED on
+                pins.digitalWritePin(greenPin, 1) // GREEN on
+                pins.digitalWritePin(bluePin, 1) // BLUE on
                 for (let a = 0; a < 10; a++) {
-                    if (a % 2 == 0) pins.digitalWritePin(DigitalPin.P13, 0) // RED on
-                    else pins.digitalWritePin(DigitalPin.P13, 1) // RED off
+                    if (a % 2 == 0) pins.digitalWritePin(redPin, 0) // RED on
+                    else pins.digitalWritePin(redPin, 1) // RED off
                     basic.pause(500)
                 }
                 showColor(BLUE_KEY) // BLUE_KEY 대체
@@ -517,12 +505,12 @@ namespace braillebot {
                 if (rightValue < 0) rightValue = 0
 
                 if ((leftValue > 300 && leftValue < 900) && (rightValue > 300 && rightValue < 900)) {
-                    pins.digitalWritePin(DigitalPin.P13, 1) // RED on
-                    pins.digitalWritePin(DigitalPin.P14, 1) // GREEN
-                    pins.digitalWritePin(DigitalPin.P15, 1) // BLUE
+                    pins.digitalWritePin(redPin, 1) // RED on
+                    pins.digitalWritePin(greenPin, 1) // GREEN
+                    pins.digitalWritePin(bluePin, 1) // BLUE
                     for (let a = 0; a < 10; a++) {
-                        if (a % 2 == 0) pins.digitalWritePin(DigitalPin.P13, 0) // RED
-                        else pins.digitalWritePin(DigitalPin.P13, 1)
+                        if (a % 2 == 0) pins.digitalWritePin(redPin, 0) // RED
+                        else pins.digitalWritePin(redPin, 1)
                         basic.pause(500)
                     }
                     showColor(BLUE_KEY)
@@ -545,6 +533,13 @@ namespace braillebot {
 
     function direct_send_gcube(p: number[], serialPort: String) {
         const buffer = pins.createBufferFromArray(p)
+
+        if(serialPort=="left"){
+            serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
+        }else{
+            serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
+        }
+
         serial.writeBuffer(buffer)
         basic.pause(1)
     }
@@ -748,13 +743,13 @@ namespace braillebot {
             moveRobot(baseSpeed, 9)
             basic.pause(300)
 
-            pins.servoWritePin(AnalogPin.P16, 35)
+            pins.servoWritePin(servoPin, 35)
             basic.pause(300)
 
             moveRobot(-1 * baseSpeed, 8)
             basic.pause(300)
 
-            pins.servoWritePin(AnalogPin.P16, 90)
+            pins.servoWritePin(servoPin, 90)
             basic.pause(300)
 
             rotateRobot(-50, 60)
@@ -765,7 +760,7 @@ namespace braillebot {
             }
         } else {
             basic.pause(300)
-            pins.servoWritePin(AnalogPin.P16, 35)
+            pins.servoWritePin(servoPin, 35)
             basic.pause(300)
         }
     }
@@ -775,14 +770,14 @@ namespace braillebot {
         if (mode) {
             let detection_flag = false
             motorSpeedControl(0, 0)
-            pins.servoWritePin(AnalogPin.P16, 35)
+            pins.servoWritePin(servoPin, 35)
             basic.pause(300)
 
             moveRobot(baseSpeed, 9)
             basic.pause(300)
 
             for (let i = 40; i <= 90; i += 5) {
-                pins.servoWritePin(AnalogPin.P16, i)
+                pins.servoWritePin(servoPin, i)
                 basic.pause(100)
             }
 
@@ -800,7 +795,7 @@ namespace braillebot {
         } else {
             basic.pause(300)
             for (let i = 40; i <= 90; i += 5) {
-                pins.servoWritePin(AnalogPin.P16, i)
+                pins.servoWritePin(servoPin, i)
                 basic.pause(100)
             }
             basic.pause(300)
@@ -908,7 +903,6 @@ namespace braillebot {
             }
 
             colorCount++
-            sonicCount++
 
             if (blindColor > 0) {
                 blindColor--
@@ -958,6 +952,7 @@ namespace braillebot {
 
 
     control.inBackground(function () {
+        /*
         while (true) {
 
             // 큐브 연결 여부 판단 (MakeCode에서는 RX 라인 상태 확인이 불가하므로 timeout 대체)
@@ -971,9 +966,9 @@ namespace braillebot {
                     motorSpeedControl(0, 0)
                 }
                 // RGB LED 모두 끄기
-                pins.digitalWritePin(DigitalPin.P13, 0)
-                pins.digitalWritePin(DigitalPin.P14, 0)
-                pins.digitalWritePin(DigitalPin.P15, 0)
+                pins.digitalWritePin(redPin, 0)
+                pins.digitalWritePin(greenPin, 0)
+                pins.digitalWritePin(bluePin, 0)
 
                 allConnected = false
             } else {
@@ -1013,6 +1008,7 @@ namespace braillebot {
                 basic.pause(30)
             }
         }
+        */
     })
 
 
@@ -1027,11 +1023,11 @@ namespace braillebot {
      */
     //% block="Initialize braille bot"
     export function startBrailleBot(): void {
-        pins.digitalWritePin(DigitalPin.P13, 1) // RED Off
-        pins.digitalWritePin(DigitalPin.P14, 1) // GREEN Off
-        pins.digitalWritePin(DigitalPin.P15, 1) // BLUE Off
+        pins.digitalWritePin(redPin, 1) // RED Off
+        pins.digitalWritePin(greenPin, 1) // GREEN Off
+        pins.digitalWritePin(bluePin, 1) // BLUE Off
 
-        pins.servoWritePin(AnalogPin.P16, 90)
+        pins.servoWritePin(servoPin, 90)
 
         pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
 
