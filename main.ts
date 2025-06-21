@@ -4,7 +4,7 @@
 /**
  * braillebot blocks
  */
-//% weight=100 color=#111111 icon="\uf0fe"
+//% weight=100 color=#333333 icon="\uf0fe"
 namespace braillebot {
      
     // 핀 설정
