@@ -22,9 +22,8 @@ namespace braillebot {
     const BLACK_THRESHOLD = 500
 
     let tracking = false
-    let autoMode = false
     let reading = false
-    let allConnected = true
+    let allConnected = false
     let MelodyMode = false
 
     let baseSpeed = 70
@@ -124,13 +123,6 @@ namespace braillebot {
         config.setUint8(2, 0x00)           // 레지스터 주소 0x02
         pins.i2cWriteBuffer(VEML6040_ADDR, config)
         basic.pause(200)
-    }
-
-    function veml6040_checkConnection(): boolean {
-        // 간단히 색상 레지스터 하나 읽어서 0이 아니면 정상으로 판단
-        pins.i2cWriteNumber(VEML6040_ADDR, 0x08, NumberFormat.UInt8BE)
-        let r = pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
-        return r > 0
     }
 
     function readColorRegister(register: number): number {
@@ -566,9 +558,6 @@ namespace braillebot {
         if (motor_speed < -100) motor_speed = -100
         else if (motor_speed > 100) motor_speed = 100
 
-        const config = pins.createBuffer(3)
-        config.setUint8(0, 0x00)           // 레지스터 주소 0x00
-
         let buffer = pins.createBuffer(10)
         buffer.setUint8(0, GCUBE_REQ_LINEBOARD_SPEED)
         buffer.setUint8(1, get_iv(GCUBE_REQ_LINEBOARD_SPEED))
@@ -653,7 +642,7 @@ namespace braillebot {
 
     function wait_for_lineboard_cube_connected(mode: number) {
         let rcvData: number[] = [0, 0, 0]
-        let allConnected = 0
+        let cubeNumber = 0
 
         // P0 RX (Cube 1), P2 RX (Cube 2)
         pins.setPull(DigitalPin.P0, PinPullMode.PullUp)
@@ -675,7 +664,7 @@ namespace braillebot {
 
         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
             direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
-            allConnected++
+            cubeNumber++
         }
 
         serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
@@ -686,10 +675,10 @@ namespace braillebot {
 
         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
             direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
-            allConnected++
+            cubeNumber++
         }
 
-        if (allConnected >= mode) return
+        if (cubeNumber >= mode) return
     }
 
 
@@ -889,6 +878,83 @@ namespace braillebot {
         }
     }
 
+    function mapToRange(val: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number {
+        return Math.idiv((val - fromLow) * (toHigh - toLow), (fromHigh - fromLow)) + toLow
+    }
+
+
+    control.inBackground(function () {
+        while (true) {
+            basic.pause(16) // 약 16ms 간격
+
+            if (reading) continue // 센서 읽는 중엔 건너뛰기
+
+            if (tracking) {
+                leftValue = pins.analogReadPin(AnalogPin.P3) // 좌측 IR
+                rightValue = pins.analogReadPin(AnalogPin.P4) // 우측 IR
+
+                leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
+                rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
+
+                if (leftValue < 0) leftValue = 0
+                if (rightValue < 0) rightValue = 0
+
+                pid_input = (-1 * leftValue + rightValue) / 64.0
+                computePID() // PID 계산
+
+                motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
+            }
+
+            colorCount++
+            sonicCount++
+
+            if (blindColor > 0) {
+                blindColor--
+            }
+        }
+    })
+
+
+    // 메인 컬러 감지 루프
+    control.inBackground(function () {
+        while (true) {
+            basic.pause(98)  // 98ms 마다 검사
+
+            if (blindColor == 0 && allConnected) {
+                if (meetColor()) {
+                    basic.pause(60)
+                    colorkey = detectColorKey()
+                    if (colorkey > 0) {
+                        showColor(colorkey)
+
+                        if (colorkey == RED_KEY) basic.pause(190)
+                        if (colorkey == BLUE_KEY) basic.pause(150)
+
+                        if (colorkey > 0 && colorkey < 9) {
+                            tracking = false
+                            basic.pause(20)
+
+                            if (colorkey == ORANGE_KEY) {
+                                motorSpeedControl(0, 0)
+                                basic.pause(500)
+                            } else if (colorkey == CYAN_KEY) {
+                                motorSpeedControl(0, 0)
+                                basic.pause(500)
+                                direct_cube_melody_control(2, 0x28, 0x28, 0, "left")
+                                basic.pause(1000)
+                            }
+
+                            lineExist = 0
+                            handleColor(colorkey)
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+
+
 
 
 
@@ -908,6 +974,14 @@ namespace braillebot {
         basic.pause(500)
 
         veml6040_init()
+
+        checkWhiteBalance(0)
+
+        wait_for_lineboard_cube_connected(2)
+
+        allConnected = true
+
+        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
 
     }
 
