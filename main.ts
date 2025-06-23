@@ -1046,7 +1046,7 @@ namespace braillebot {
     }
 
 
-    //% block="현재 Color Key 값"
+    //% block="Color key value"
     export function getColorKey(): number {
         return colorkey
     }
