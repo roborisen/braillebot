@@ -6,7 +6,7 @@
  */
 //% weight=100 color=#3333FF icon="\uf0fe"
 namespace braillebot {
-     
+
     // 핀 설정
 
     const redPin = DigitalPin.P13
@@ -22,7 +22,7 @@ namespace braillebot {
     let tracking = false
     let reading = false
     let allConnected = false
-    let MelodyMode = false
+    let melodyMode = false
 
     let baseSpeed = 70
     let deviation = 20
@@ -97,11 +97,26 @@ namespace braillebot {
     const GCUBE_GET_BOARD_ID = 0x10 // 보드의 ID 값 확인 요청
     const GCUBE_LINE_BOARD_ID = 0x72 // 자동차형 모델 큐브 2개에 꽂혀 동작하는 트레이싱 전용 보드 ID : 0x72 ~ 2024-10-08
 
+    export enum Note {
+        Do = 262,
+        Re = 294,
+        Mi = 330,
+        Fa = 349,
+        Sol = 392,
+        La = 440,
+        Si = 494,
+        HighDo = 523
+    }
+
+    export enum Checking {
+        None = 0,
+        Skip = 1
+    }
 
     serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
     serial.setRxBufferSize(10)
     serial.setTxBufferSize(10)
-    
+
 
     function veml6040_init() {
         const config = pins.createBuffer(3)
@@ -534,9 +549,9 @@ namespace braillebot {
     function direct_send_gcube(p: number[], serialPort: String) {
         const buffer = pins.createBufferFromArray(p)
 
-        if(serialPort=="left"){
+        if (serialPort == "left") {
             serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
-        }else{
+        } else {
             serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
         }
 
@@ -560,7 +575,7 @@ namespace braillebot {
         buffer.setUint8(4, colorkey)
         buffer.setUint8(5, distance)
         buffer.setUint8(6, 0)
-        buffer.setUint8( 7, 0)
+        buffer.setUint8(7, 0)
         buffer.setUint8(8, 0)
         buffer.setUint8(9, 0)
 
@@ -734,7 +749,360 @@ namespace braillebot {
         return (leftValue > BLACK_THRESHOLD && rightValue > BLACK_THRESHOLD)
     }
 
-    function gripperOpen(mode: boolean): void {
+
+    function mapToRange(val: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number {
+        return Math.idiv((val - fromLow) * (toHigh - toLow), (fromHigh - fromLow)) + toLow
+    }
+
+
+
+    /*
+        function gripperOpen(mode: boolean): void {
+            if (mode) {
+                let detection_flag = false
+                motorSpeedControl(0, 0)
+                basic.pause(300)
+    
+                moveRobot(baseSpeed, 9)
+                basic.pause(300)
+    
+                pins.servoWritePin(servoPin, 35)
+                basic.pause(300)
+    
+                moveRobot(-1 * baseSpeed, 8)
+                basic.pause(300)
+    
+                pins.servoWritePin(servoPin, 90)
+                basic.pause(300)
+    
+                rotateRobot(-50, 60)
+                detection_flag = rotateUntilDetectLine(0)
+    
+                if (detection_flag) {
+                    tracking = true
+                }
+            } else {
+                basic.pause(300)
+                pins.servoWritePin(servoPin, 35)
+                basic.pause(300)
+            }
+        }
+    
+    
+        function gripperClose(mode: boolean): void {
+            if (mode) {
+                let detection_flag = false
+                motorSpeedControl(0, 0)
+                pins.servoWritePin(servoPin, 35)
+                basic.pause(300)
+    
+                moveRobot(baseSpeed, 9)
+                basic.pause(300)
+    
+                for (let i = 40; i <= 90; i += 5) {
+                    pins.servoWritePin(servoPin, i)
+                    basic.pause(100)
+                }
+    
+                basic.pause(300)
+                moveRobot(-1 * baseSpeed, 8)
+                basic.pause(300)
+    
+                rotateRobot(-50, 60)
+                detection_flag = rotateUntilDetectLine(0)
+    
+                if (detection_flag) {
+                    tracking = true
+                }
+    
+            } else {
+                basic.pause(300)
+                for (let i = 40; i <= 90; i += 5) {
+                    pins.servoWritePin(servoPin, i)
+                    basic.pause(100)
+                }
+                basic.pause(300)
+            }
+        }
+    
+    
+        function handleColor(color: number): void {
+            let detection_flag = false
+            showColor(color)
+    
+            switch (color) {
+    
+                case RED_KEY:
+                    moveRobot(baseSpeed, move_deviation)
+                    rotateRobot(baseSpeed, 55)
+                    detection_flag = rotateUntilDetectLine(1)
+                    if (melodyMode) {
+                        direct_cube_melody_control(2, 0x2F, 0x33, 0, "left")
+                        basic.pause(1000)
+                    }
+                    if (detection_flag) tracking = true
+                    break
+    
+                case BLUE_KEY:
+                    moveRobot(baseSpeed, move_deviation)
+                    rotateRobot(-1 * baseSpeed, 55)
+                    detection_flag = rotateUntilDetectLine(0)
+                    if (melodyMode) {
+                        direct_cube_melody_control(2, 0x2F, 0x2C, 0, "left")
+                        basic.pause(1000)
+                    }
+                    if (detection_flag) tracking = true
+                    break
+    
+                case GREEN_KEY:
+                    motorSpeedControl(0, 0)
+                    basic.pause(100)
+                    if (melodyMode) {
+                        direct_cube_melody_control(2, 0x34, 0x34, 0, "left")
+                        basic.pause(1000)
+                        melodyMode = false
+                    }
+                    break
+                case YELLOW_KEY:
+                    moveRobot(baseSpeed, 2)
+                    rotateRobot(-50, 90)
+                    detection_flag = rotateUntilDetectLine(0)
+                    if (melodyMode) {
+                        direct_cube_melody_control(2, 0x2F, 0x2F, 0, "left")
+                        basic.pause(1000)
+                    }
+                    if (detection_flag) tracking = true
+                    break
+    
+                case ORANGE_KEY:
+                    blindColor = 42
+                    tracking = true
+                    break
+    
+                case MAGENTA_KEY:
+                    gripperClose(true)
+                    break
+    
+                case PINK_KEY:
+                    gripperOpen(true)
+                    break
+    
+                case CYAN_KEY:
+                    blindColor = 42
+                    melodyMode = true
+                    tracking = true
+                    break
+    
+                default:
+                    break
+            }
+        }
+    
+    */
+
+
+
+
+    /*
+        control.inBackground(function () {
+            while (true) {
+    
+                if (tracking) {
+                    leftValue = pins.analogReadPin(AnalogPin.P3) // 좌측 IR
+                    rightValue = pins.analogReadPin(AnalogPin.P4) // 우측 IR
+    
+                    leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
+                    rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
+    
+                    if (leftValue < 0) leftValue = 0
+                    if (rightValue < 0) rightValue = 0
+    
+                    pid_input = (-1 * leftValue + rightValue) / 64.0
+                    computePID() // PID 계산
+    
+                    motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
+                }
+    
+                colorCount++
+    
+                if (blindColor > 0) {
+                    blindColor--
+                }
+    
+                basic.pause(16) // 약 16ms 간격
+            }
+        })
+    
+    
+        // 메인 컬러 감지 루프
+        control.inBackground(function () {
+            while (true) {
+                basic.pause(98)  // 98ms 마다 검사
+    
+                if (blindColor == 0 && allConnected) {
+                    if (meetColor()) {
+                        basic.pause(60)
+                        colorkey = detectColorKey()
+                        if (colorkey > 0) {
+                            showColor(colorkey)
+    
+                            if (colorkey == RED_KEY) basic.pause(190)
+                            if (colorkey == BLUE_KEY) basic.pause(150)
+    
+                            if (colorkey > 0 && colorkey < 9) {
+                                tracking = false
+                                basic.pause(20)
+    
+                                if (colorkey == ORANGE_KEY) {
+                                    motorSpeedControl(0, 0)
+                                    basic.pause(500)
+                                } else if (colorkey == CYAN_KEY) {
+                                    motorSpeedControl(0, 0)
+                                    basic.pause(500)
+                                    direct_cube_melody_control(2, 0x28, 0x28, 0, "left")
+                                    basic.pause(1000)
+                                }
+    
+                                lineExist = 0
+                                handleColor(colorkey)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    */
+
+
+    /**
+     * Setup braille bot
+     */
+    //% block="Setup braille bot"
+    export function setupBrailleBot(): void {
+        pins.digitalWritePin(redPin, 1) // RED Off
+        pins.digitalWritePin(greenPin, 1) // GREEN Off
+        pins.digitalWritePin(bluePin, 1) // BLUE Off
+
+        pins.servoWritePin(servoPin, 90)
+
+        pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
+
+        basic.pause(500)
+
+        veml6040_init()
+
+        checkWhiteBalance(0)
+
+        wait_for_lineboard_cube_connected(2)
+
+        allConnected = true
+
+        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
+
+    }
+
+
+    //% block="Read Color key"
+    export function getColorKey(): number {
+        let colorNumber = detectColorKey();
+        return colorNumber
+    }
+
+
+    //% block="Show Color with $colorNumber"
+    export function showColorKey(colorNumber: number): void {
+        if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
+    }
+
+
+    /**
+     * 두 개의 음을 1박자씩 연주하기
+     * @param note1 1st tone
+     * @param note2 2nd tone
+     */
+    //% block="PlayTone 1st: %note1| 2nd: %note2"
+    export function playTwoNotes(note1: Note, note2: Note): void {
+        music.playTone(note1, music.beat(BeatFraction.Quarter))
+        music.playTone(note2, music.beat(BeatFraction.Quarter))
+        basic.pause(1000)
+    }
+
+
+    //% block="Set Echo ON"
+    export function setEchoOn(): void {
+        melodyMode = true
+    }
+
+
+    //% block="Turn Left"
+    export function turnLeft(): void {
+        moveRobot(baseSpeed, move_deviation)
+        rotateRobot(-1 * baseSpeed, 55)
+        let detection_flag = rotateUntilDetectLine(0)
+    }
+
+
+    //% block="Turn Right"
+    export function turnRight(): void {
+        moveRobot(baseSpeed, move_deviation)
+        rotateRobot(baseSpeed, 55)
+        let detection_flag = rotateUntilDetectLine(1)
+    }
+
+
+    //% block="U turn"
+    export function uTurn(): void {
+        moveRobot(baseSpeed, 2)
+        rotateRobot(-50, 90)
+        let detection_flag = rotateUntilDetectLine(0)
+    }
+
+
+    //% block="Line tracking to next color %mode"
+    export function lineTrackingToNextColor(mode: Checking): void {
+
+        colorCount = 0;
+
+        while (true) {
+
+            if (tracking) {
+                leftValue = pins.analogReadPin(AnalogPin.P3) // Left IR
+                rightValue = pins.analogReadPin(AnalogPin.P4) // Right IR
+
+                leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
+                rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
+
+                if (leftValue < 0) leftValue = 0
+                if (rightValue < 0) rightValue = 0
+
+                pid_input = (-1 * leftValue + rightValue) / 64.0
+                computePID() // PID calculation
+
+                motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
+            }
+
+            colorCount++
+
+            basic.pause(16) // 16ms line tracking
+
+            if (colorCount % 6 == 0 && mode == 0) { // every 16*6 = 96 msec check the Color sensor
+                let existColor = meetColor()
+                if (existColor) {
+                    basic.pause(60) //wait for reading position
+                    break
+                }
+            }
+
+            if (mode == 1 && colorCount > 42) break  // exit skip near color mode ORANGE/CYAN
+            if (colorCount > 625) break  // Searching next color time limit 10 msec
+        }
+        motorSpeedControl(0, 0)
+        basic.pause(50)
+    }
+
+
+    //% block="Gripper Open $mode"
+    export function gripperOpenBlock(mode: boolean): void {
         if (mode) {
             let detection_flag = false
             motorSpeedControl(0, 0)
@@ -766,7 +1134,8 @@ namespace braillebot {
     }
 
 
-    function gripperClose(mode: boolean): void {
+    //% block="Gripper Close $mode"
+    export function gripperCloseBlock(mode: boolean): void {
         if (mode) {
             let detection_flag = false
             motorSpeedControl(0, 0)
@@ -803,254 +1172,21 @@ namespace braillebot {
     }
 
 
-    function handleColor(color: number): void {
-        let detection_flag = false
-        showColor(color)
-
-        switch (color) {
-
-            case RED_KEY:
-                moveRobot(baseSpeed, move_deviation)
-                rotateRobot(baseSpeed, 55)
-                detection_flag = rotateUntilDetectLine(1)
-                if (MelodyMode) {
-                    direct_cube_melody_control(2, 0x2F, 0x33, 0, "left")
-                    basic.pause(1000)
-                }
-                if (detection_flag) tracking = true
-                break
-
-            case BLUE_KEY:
-                moveRobot(baseSpeed, move_deviation)
-                rotateRobot(-1 * baseSpeed, 55)
-                detection_flag = rotateUntilDetectLine(0)
-                if (MelodyMode) {
-                    direct_cube_melody_control(2, 0x2F, 0x2C, 0, "left")
-                    basic.pause(1000)
-                }
-                if (detection_flag) tracking = true
-                break
-
-            case GREEN_KEY:
-                motorSpeedControl(0, 0)
-                basic.pause(100)
-                if (MelodyMode) {
-                    direct_cube_melody_control(2, 0x34, 0x34, 0, "left")
-                    basic.pause(1000)
-                    MelodyMode = false
-                }
-                break
-            case YELLOW_KEY:
-                moveRobot(baseSpeed, 2)
-                rotateRobot(-50, 90)
-                detection_flag = rotateUntilDetectLine(0)
-                if (MelodyMode) {
-                    direct_cube_melody_control(2, 0x2F, 0x2F, 0, "left")
-                    basic.pause(1000)
-                }
-                if (detection_flag) tracking = true
-                break
-
-            case ORANGE_KEY:
-                blindColor = 42
-                tracking = true
-                break
-
-            case MAGENTA_KEY:
-                gripperClose(true)
-                break
-
-            case PINK_KEY:
-                gripperOpen(true)
-                break
-
-            case CYAN_KEY:
-                blindColor = 42
-                MelodyMode = true
-                tracking = true
-                break
-
-            default:
-                break
-        }
-    }
-
-    function mapToRange(val: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number {
-        return Math.idiv((val - fromLow) * (toHigh - toLow), (fromHigh - fromLow)) + toLow
+    //% block="Move forward $distance cm , with speed : $speed %"
+    export function moveBraillebot(speed: number, distance: number): void {
+        moveRobot(speed, distance)
     }
 
 
-    control.inBackground(function () {
-        while (true) {
-            basic.pause(16) // 약 16ms 간격
-
-            if (reading) continue // 센서 읽는 중엔 건너뛰기
-
-            if (tracking) {
-                leftValue = pins.analogReadPin(AnalogPin.P3) // 좌측 IR
-                rightValue = pins.analogReadPin(AnalogPin.P4) // 우측 IR
-
-                leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
-                rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
-
-                if (leftValue < 0) leftValue = 0
-                if (rightValue < 0) rightValue = 0
-
-                pid_input = (-1 * leftValue + rightValue) / 64.0
-                computePID() // PID 계산
-
-                motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
-            }
-
-            colorCount++
-
-            if (blindColor > 0) {
-                blindColor--
-            }
-        }
-    })
-
-
-    // 메인 컬러 감지 루프
-    control.inBackground(function () {
-        while (true) {
-            basic.pause(98)  // 98ms 마다 검사
-
-            if (blindColor == 0 && allConnected) {
-                if (meetColor()) {
-                    basic.pause(60)
-                    colorkey = detectColorKey()
-                    if (colorkey > 0) {
-                        showColor(colorkey)
-
-                        if (colorkey == RED_KEY) basic.pause(190)
-                        if (colorkey == BLUE_KEY) basic.pause(150)
-
-                        if (colorkey > 0 && colorkey < 9) {
-                            tracking = false
-                            basic.pause(20)
-
-                            if (colorkey == ORANGE_KEY) {
-                                motorSpeedControl(0, 0)
-                                basic.pause(500)
-                            } else if (colorkey == CYAN_KEY) {
-                                motorSpeedControl(0, 0)
-                                basic.pause(500)
-                                direct_cube_melody_control(2, 0x28, 0x28, 0, "left")
-                                basic.pause(1000)
-                            }
-
-                            lineExist = 0
-                            handleColor(colorkey)
-                        }
-                    }
-                }
-            }
-        }
-    })
-
-
-
-    control.inBackground(function () {
-        /*
-        while (true) {
-
-            // 큐브 연결 여부 판단 (MakeCode에서는 RX 라인 상태 확인이 불가하므로 timeout 대체)
-            let status1 = false
-            let status2 = false
-
-            if (!status1 || !status2) {
-                if (tracking) {
-                    tracking = false
-                    basic.pause(20)
-                    motorSpeedControl(0, 0)
-                }
-                // RGB LED 모두 끄기
-                pins.digitalWritePin(redPin, 0)
-                pins.digitalWritePin(greenPin, 0)
-                pins.digitalWritePin(bluePin, 0)
-
-                allConnected = false
-            } else {
-                allConnected = true
-            }
-
-            serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
-
-            // 명령 수신 및 처리
-            let data = serial.readBuffer(3)
-            let cmd = data.getUint8(0)
-
-            if (cmd == GCUBE_REQ_LINEBOARD_REBOOT) {
-                control.reset()
-            } else if (cmd == GCUBE_GET_BOARD_ID) {
-                if (tracking) {
-                    tracking = false
-                    basic.pause(20)
-                }
-                direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left");
-                basic.pause(30)
-            }
-
-            serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
-
-            let data2 = serial.readBuffer(3)
-            let cmd2 = data2.getUint8(0)
-
-            if (cmd2 == GCUBE_REQ_LINEBOARD_REBOOT) {
-                control.reset()
-            } else if (cmd2 == GCUBE_GET_BOARD_ID) {
-                if (tracking) {
-                    tracking = false
-                    basic.pause(20)
-                }
-                direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right");
-                basic.pause(30)
-            }
-        }
-        */
-    })
-
-
-
-
-
-
-
-
-    /**
-     * start braille bot
-     */
-    //% block="Initialize braille bot"
-    export function startBrailleBot(): void {
-        pins.digitalWritePin(redPin, 1) // RED Off
-        pins.digitalWritePin(greenPin, 1) // GREEN Off
-        pins.digitalWritePin(bluePin, 1) // BLUE Off
-
-        pins.servoWritePin(servoPin, 90)
-
-        pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
-
-        basic.pause(500)
-
-        veml6040_init()
-
-        checkWhiteBalance(0)
-
-        wait_for_lineboard_cube_connected(2)
-
-        allConnected = true
-
-        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
-
+    //% block="Rotate $degree degree , with speed : $speed %"
+    export function rotateBraillebot(speed: number, degree: number): void {
+        rotateRobot(speed, degree)
     }
 
 
-    //% block="Color key value"
-    export function getColorKey(): number {
-        return colorkey
+    //% block="Set motor speed Left: $left % and Right: $right"
+    export function setMotorSpeed(left: number, right: number): void {
+        motorSpeedControl(left, right)
     }
-
-
 
 }
