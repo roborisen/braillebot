@@ -981,7 +981,7 @@ namespace braillebot {
     export function setupBrailleBot(): void {
         pins.digitalWritePin(redPin, 1) // RED Off
         pins.digitalWritePin(greenPin, 1) // GREEN Off
-        pins.digitalWritePin(bluePin, 1) // BLUE Off
+        pins.digitalWritePin(bluePin, 0) // BLUE Off
 
         pins.servoWritePin(servoPin, 90)
 
