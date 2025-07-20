@@ -653,14 +653,14 @@ namespace braillebot {
         let rcvData: number[] = [0, 0, 0]
         let cubeNumber = 0
 
-        // P0 RX (Cube 1), P2 RX (Cube 2)
-        pins.setPull(DigitalPin.P0, PinPullMode.PullUp)
-        let pinState = pins.digitalReadPin(DigitalPin.P0)
+        // P2 RX (Cube 1), P12 RX (Cube 2)
+        pins.setPull(DigitalPin.P2, PinPullMode.PullUp)
+        let pinState = pins.digitalReadPin(DigitalPin.P2)
         if (pinState == 1) {
             direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
         }
-        pins.setPull(DigitalPin.P2, PinPullMode.PullUp)
-        pinState = pins.digitalReadPin(DigitalPin.P2)
+        pins.setPull(DigitalPin.P12, PinPullMode.PullUp)
+        pinState = pins.digitalReadPin(DigitalPin.P12)
         if (pinState == 1) {
             direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "right")
         }
