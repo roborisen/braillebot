@@ -20,7 +20,6 @@ namespace braillebot {
     const BLACK_THRESHOLD = 500
 
     let tracking = false
-    let reading = false
     let allConnected = false
     let melodyMode = false
 
@@ -222,11 +221,9 @@ namespace braillebot {
         let returnKey = false
 
         // VEML6040에서 RGB 값 읽기
-        reading = true
         red = readRed()
         green = readGreen()
         blue = readBlue()
-        reading = false
 
         // 검정색이면 밸런스 카운트 증가
         if (red + green + blue < 1300) {
@@ -292,11 +289,9 @@ namespace braillebot {
         let returnKey = 0
 
         // VEML6040에서 RGB 읽기
-        reading = true
         red = readRed()
         green = readGreen()
         blue = readBlue()
-        reading = false
 
         normred = red / redBalance
         normgreen = green / greenBalance
@@ -981,7 +976,7 @@ namespace braillebot {
     export function setupBrailleBot(): void {
         pins.digitalWritePin(redPin, 1) // RED Off
         pins.digitalWritePin(greenPin, 1) // GREEN Off
-        pins.digitalWritePin(bluePin, 0) // BLUE Off
+        pins.digitalWritePin(bluePin, 1) // BLUE Off
 
         pins.servoWritePin(servoPin, 90)
 
