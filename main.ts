@@ -123,6 +123,17 @@ namespace braillebot {
     serial.setRxBufferSize(10)
     serial.setTxBufferSize(10)
 
+    function veml6040_begin(): boolean {
+        let sensorExists = false
+        try {
+            pins.i2cWriteNumber(VEML6040_ADDR, 0x00, NumberFormat.UInt8BE)
+            sensorExists = true
+        } catch (e) {
+            sensorExists = false
+        }
+        return sensorExists
+    }
+
 
     function veml6040_init() {
 
@@ -778,7 +789,12 @@ namespace braillebot {
         basic.pause(500)
 
 
-        veml6040_init()
+        if (veml6040_begin()) {
+            veml6040_init()
+            basic.showIcon(IconNames.Happy)
+        } else {
+            basic.showIcon(IconNames.Sad)
+        }
 
         checkWhiteBalance(0)
 
