@@ -118,7 +118,7 @@ namespace braillebot {
 
 
     function veml6040_init() {
-        const config = pins.createBuffer(3)
+        let config = pins.createBuffer(3)
         config.setUint8(0, 0x00)           // 레지스터 주소 0x00
         config.setUint8(1, 0x00)           // 레지스터 주소 0x01
         config.setUint8(2, 0x00)           // 레지스터 주소 0x02
