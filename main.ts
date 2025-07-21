@@ -155,15 +155,15 @@ namespace braillebot {
     }
 
     function readRed(): number {
-        return readColorRegister(0x08)
+        return readColorRegister(0x02)
     }
 
     function readGreen(): number {
-        return readColorRegister(0x09)
+        return readColorRegister(0x04)
     }
 
     function readBlue(): number {
-        return readColorRegister(0x0A)
+        return readColorRegister(0x06)
     }
 
     // ... (이전 코드 유지)
