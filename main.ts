@@ -127,7 +127,9 @@ namespace braillebot {
     }
 
     function readColorRegister(register: number): number {
-        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.UInt8BE)
+        let regbuf = pins.createBuffer(1)
+        regbuf.setUint8(0, register)
+        pins.i2cWriteBuffer(VEML6040_ADDR, regbuf, false)
         return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
     }
 
