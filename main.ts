@@ -148,22 +148,22 @@ namespace braillebot {
 
     function readColorRegister(register: number): number {
 
-        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.Int8LE)
+        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.Int8BE, false)
         basic.pause(10)
 
         return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
     }
 
     function readRed(): number {
-        return readColorRegister(0x02)
+        return readColorRegister(0x08)
     }
 
     function readGreen(): number {
-        return readColorRegister(0x04)
+        return readColorRegister(0x09)
     }
 
     function readBlue(): number {
-        return readColorRegister(0x06)
+        return readColorRegister(0x0A)
     }
 
     // ... (이전 코드 유지)
