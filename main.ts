@@ -131,17 +131,15 @@ namespace braillebot {
         buf[0] = 0x00 //CMD register
         buf[1] = 0x10
         buf[2] = 0x00
-        pins.i2cWriteBuffer(VEML6040_ADDR, buf, false)
+        pins.i2cWriteBuffer(VEML6040_ADDR, buf)
 
         basic.pause(200)
     }
 
     function readColorRegister(register: number): number {
 
-        let buf = pins.createBuffer(1)
-        buf[0] = register //CMD register
-        pins.i2cWriteBuffer(VEML6040_ADDR, buf, false)
-
+        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.UInt8BE)
+        basic.pause(10)
         return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
     }
 
