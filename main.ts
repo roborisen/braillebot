@@ -9,6 +9,7 @@ namespace braillebot {
 
     // 핀 설정
 
+
     const redPin = DigitalPin.P13
     const greenPin = DigitalPin.P14
     const bluePin = DigitalPin.P15
