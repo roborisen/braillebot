@@ -118,18 +118,26 @@ namespace braillebot {
 
 
     function veml6040_init() {
+    /*
         let config = pins.createBuffer(3)
         config.setUint8(0, 0x00)           // 레지스터 주소 0x00
         config.setUint8(1, 0x00)           // 레지스터 주소 0x01
         config.setUint8(2, 0x00)           // 레지스터 주소 0x02
         pins.i2cWriteBuffer(VEML6040_ADDR, config)
         basic.pause(200)
+    */
+
+        let buf = pins.createBuffer(2)
+        buf[0] = 0x00 //CMD register
+        buf[1] = 0x10
+        pins.i2cWriteBuffer(VEML6040_ADDR, buf)
+
+        basic.pause(200)
     }
 
     function readColorRegister(register: number): number {
-        let regbuf = pins.createBuffer(1)
-        regbuf.setUint8(0, register)
-        pins.i2cWriteBuffer(VEML6040_ADDR, regbuf, false)
+
+        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.UInt8BE, false)
         return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
     }
 
