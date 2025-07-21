@@ -977,7 +977,7 @@ namespace braillebot {
         let tempData = detectColorKey()
         showColor(tempData)
 
-        tempData = blue
+        tempData = normblue
         basic.showNumber(tempData, 100)
     }
 
