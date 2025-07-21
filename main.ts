@@ -777,9 +777,10 @@ namespace braillebot {
 
         basic.pause(500)
 
-/*
+
         veml6040_init()
 
+/*
         let tempRed = pins.analogReadPin(AnalogPin.P4)
 
         basic.showNumber(tempRed,100)
@@ -985,7 +986,8 @@ namespace braillebot {
 
     //% block="Show data"
     export function showData(): void{
-        let tempRed = pins.analogReadPin(AnalogPin.P4)
+        //let tempRed = pins.analogReadPin(AnalogPin.P4)
+        let tempRed = readRed()
         basic.showNumber(tempRed, 100)
     }
 
