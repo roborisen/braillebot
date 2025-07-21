@@ -140,7 +140,7 @@ namespace braillebot {
         pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.Int8LE)
         basic.pause(10)
 
-        return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16BE)
+        return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
     }
 
     function readRed(): number {
