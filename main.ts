@@ -779,7 +779,8 @@ namespace braillebot {
 
         veml6040_init()
 
-        let tempRed = readRed()
+        let tempRed = pins.analogReadPin(AnalogPin.P3)
+
         basic.showNumber(tempRed,100)
 
         checkWhiteBalance(0)
