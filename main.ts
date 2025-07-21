@@ -772,19 +772,18 @@ namespace braillebot {
 
         veml6040_init()
 
+//        let tempRed = pins.analogReadPin(AnalogPin.P4)
+//        basic.showNumber(tempRed,100)
+
 /*
-        let tempRed = pins.analogReadPin(AnalogPin.P4)
-
-        basic.showNumber(tempRed,100)
-
         checkWhiteBalance(0)
 
         wait_for_lineboard_cube_connected(2)
 
         allConnected = true
-
-        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
 */
+        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
+
 
     }
 
