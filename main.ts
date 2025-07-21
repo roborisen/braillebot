@@ -112,6 +112,12 @@ namespace braillebot {
         Skip = 1
     }
 
+    export enum Colors {
+        Red = 0,
+        Green = 1,
+        Blue = 2
+    }
+
     serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
     serial.setRxBufferSize(10)
     serial.setTxBufferSize(10)
@@ -971,12 +977,15 @@ namespace braillebot {
         motorSpeedControl(left, right)
     }
 
-    //% block="Show data"
-    export function showData(): void{
+    //% block="Show data %mode"
+    export function showData(mode: Colors): void{
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
         let tempData = detectColorKey()
 
-        tempData = normblue
+        if(mode==0) tempData = red
+        else if(mode==1) tempData = green
+        else if(mode==2) tempData = blue
+
         basic.showNumber(tempData, 100)
     }
 
