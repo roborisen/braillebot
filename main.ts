@@ -779,7 +779,7 @@ namespace braillebot {
 
         veml6040_init()
 
-        let tempRed = pins.analogReadPin(AnalogPin.P3)
+        let tempRed = pins.analogReadPin(AnalogPin.P4)
 
         basic.showNumber(tempRed,100)
 
