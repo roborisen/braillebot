@@ -118,14 +118,6 @@ namespace braillebot {
 
 
     function veml6040_init() {
-    /*
-        let config = pins.createBuffer(3)
-        config.setUint8(0, 0x00)           // 레지스터 주소 0x00
-        config.setUint8(1, 0x00)           // 레지스터 주소 0x01
-        config.setUint8(2, 0x00)           // 레지스터 주소 0x02
-        pins.i2cWriteBuffer(VEML6040_ADDR, config)
-        basic.pause(200)
-    */
 
         let buf = pins.createBuffer(3)
         buf[0] = 0x00 //CMD register
@@ -771,9 +763,9 @@ namespace braillebot {
         pins.digitalWritePin(greenPin, 1) // GREEN Off
         pins.digitalWritePin(bluePin, 1) // BLUE Off
 
-        pins.servoWritePin(servoPin, 90)
+//        pins.servoWritePin(servoPin, 90)
 
-        pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
+        pins.digitalWritePin(DigitalPin.P7, 0) // System LED ON
 
         basic.pause(500)
 
