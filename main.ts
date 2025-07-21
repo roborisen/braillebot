@@ -976,7 +976,7 @@ namespace braillebot {
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
         let tempData = detectColorKey()
         //showColor(tempData)
-        tempData = red/(red+green+blue)
+        tempData = blue
         basic.showNumber(tempData, 100)
     }
 
