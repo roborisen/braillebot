@@ -777,6 +777,7 @@ namespace braillebot {
 
         basic.pause(500)
 
+/*
         veml6040_init()
 
         let tempRed = pins.analogReadPin(AnalogPin.P4)
@@ -790,6 +791,7 @@ namespace braillebot {
         allConnected = true
 
         pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
+*/
 
     }
 
