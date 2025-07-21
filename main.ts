@@ -981,6 +981,7 @@ namespace braillebot {
         motorSpeedControl(left, right)
     }
 
+    //% block="Show data"
     export function showData(): void{
         let tempRed = pins.analogReadPin(AnalogPin.P4)
         basic.showNumber(tempRed, 100)
