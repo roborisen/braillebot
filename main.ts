@@ -139,8 +139,8 @@ namespace braillebot {
 
         let buf = pins.createBuffer(3)
         buf[0] = 0x00 //CMD register
-        buf[1] = 0x10
-        buf[2] = 0x00
+        buf[1] = 0x00
+        buf[2] = 0x10
         pins.i2cWriteBuffer(VEML6040_ADDR, buf)
 
         basic.pause(200)
