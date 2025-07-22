@@ -1017,6 +1017,7 @@ namespace braillebot {
         else if(mode==1) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
         else {
             direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
+            basic.pause(50)
             direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
         }
 
