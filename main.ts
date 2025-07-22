@@ -143,7 +143,7 @@ namespace braillebot {
         buf[2] = 0x00
         pins.i2cWriteBuffer(VEML6040_ADDR, buf)
 
-        basic.pause(200)
+        basic.pause(1000)
     }
 
     function readColorRegister(register: number): number {
@@ -151,7 +151,10 @@ namespace braillebot {
         pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.Int8BE, false)
         basic.pause(10)
 
-        return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
+        let low = pins.i2cReadNumber(VEML6040_ADDR, 1)
+        let high = pins.i2cReadNumber(VEML6040_ADDR, 1)
+
+        return low <<8 | high
     }
 
     function readRed(): number {
