@@ -154,7 +154,7 @@ namespace braillebot {
         let low = pins.i2cReadNumber(VEML6040_ADDR, 1)
         let high = pins.i2cReadNumber(VEML6040_ADDR, 1)
 
-        return low <<8 | high
+        return high <<8 | low
     }
 
     function readRed(): number {
