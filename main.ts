@@ -792,11 +792,12 @@ namespace braillebot {
 
         checkWhiteBalance(0)
 
+        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
+
         wait_for_lineboard_cube_connected(2)
 
         allConnected = true
 
-        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
 
 
     }
