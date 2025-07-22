@@ -1003,8 +1003,11 @@ namespace braillebot {
 //        basic.showNumber(green + 20000, 100)
 //        basic.showNumber(blue + 30000, 100)
         basic.showNumber(readRed() + 10000, 100)
+        basic.pause(500)
         basic.showNumber(readGreen() + 20000, 100)
+        basic.pause(500)
         basic.showNumber(readBlue() + 30000, 100)
+        basic.pause(500)
 
     }
 
