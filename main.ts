@@ -997,16 +997,12 @@ namespace braillebot {
     //% block="Show data %mode"
     export function showData(mode: Colors): void{
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
-//        let tempData = detectColorKey()
+        let tempData = detectColorKey()
 
-        let tempData
+        basic.showNumber(red + 10000, 100)
+        basic.showNumber(green + 20000, 100)
+        basic.showNumber(blue + 30000, 100)
 
-        if(mode==0) tempData = readRed()
-        else if(mode==1) tempData = readGreen()
-        else if(mode==2) tempData = readBlue()
-
-//        basic.showNumber(tempData, 100)
-        serial.writeLine("Color: " + tempData)
     }
 
 
