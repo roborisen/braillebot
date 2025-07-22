@@ -151,11 +151,11 @@ namespace braillebot {
         pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.UInt8BE, false)
         basic.pause(2)
 
-//        let low = pins.i2cReadNumber(VEML6040_ADDR, 1)
-//        let high = pins.i2cReadNumber(VEML6040_ADDR, 1)
+        let buf = pins.i2cReadBuffer(VEML6040_ADDR, 2)
+        let low = buf.getUint8(0)
+        let high = buf.getUint8(1)
 
-//        return high <<8 | low
-        return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
+        return (high << 8) | low  // Little Endian (VEML6040 규격)
     }
 
     function readRed(): number {
