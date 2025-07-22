@@ -995,12 +995,12 @@ namespace braillebot {
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
 //        let tempData = detectColorKey()
 
-        let tempData
-
+        let tempData = readBlue()
+/*
         if(mode==0) tempData = readRed()
         else if(mode==1) tempData = readGreen()
         else if(mode==2) tempData = readBlue()
-
+*/
         basic.showNumber(tempData, 100)
     }
 
