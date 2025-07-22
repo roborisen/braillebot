@@ -996,11 +996,11 @@ namespace braillebot {
 //        let tempData = detectColorKey()
 
         let tempData = readBlue()
-/*
-        if(mode==0) tempData = readRed()
-        else if(mode==1) tempData = readGreen()
-        else if(mode==2) tempData = readBlue()
-*/
+
+//        if(mode==0) tempData = readRed()
+//        else if(mode==1) tempData = readGreen()
+//        else if(mode==2) tempData = readBlue()
+
         basic.showNumber(tempData, 100)
     }
 
