@@ -576,7 +576,7 @@ namespace braillebot {
         }
 
         serial.writeBuffer(buffer)
-        basic.pause(1)
+        basic.pause(3)
     }
 
     function get_iv(cmd: number): number {
@@ -713,6 +713,12 @@ namespace braillebot {
         }
 
         if(cubeNumber == 1){
+            pins.setPull(DigitalPin.P2, PinPullMode.PullUp)
+            let pinState = pins.digitalReadPin(DigitalPin.P2)
+            if (pinState == 1) {
+                direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
+            }
+
             serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
             let buf = serial.readBuffer(3)
             for (let i = 0; i < 3; i++) {
@@ -1017,7 +1023,6 @@ namespace braillebot {
         else if(mode==1) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
         else {
             direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
-            basic.pause(50)
             direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
         }
 
