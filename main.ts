@@ -151,10 +151,11 @@ namespace braillebot {
         pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.Int8BE, false)
         basic.pause(10)
 
-        let low = pins.i2cReadNumber(VEML6040_ADDR, 1)
-        let high = pins.i2cReadNumber(VEML6040_ADDR, 1)
+//        let low = pins.i2cReadNumber(VEML6040_ADDR, 1)
+//        let high = pins.i2cReadNumber(VEML6040_ADDR, 1)
 
-        return high <<8 | low
+//        return high <<8 | low
+        return pins.i2cReadNumber(VEML6040_ADDR, NumberFormat.UInt16LE)
     }
 
     function readRed(): number {
