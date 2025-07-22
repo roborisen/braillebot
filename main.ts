@@ -628,6 +628,10 @@ namespace braillebot {
         if (robot_angle > 180) {
             robot_angle = 180
         }
+
+        if(serialPort == "left") led.plot(0,0)
+        else if(serialPort == "right") led.plot(4,4)
+
         direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, motor_speed, robot_angle, 0, 0, 0, 0, 0], serialPort)
     }
 
@@ -695,7 +699,6 @@ namespace braillebot {
         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
             direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
             cubeNumber++
-            led.plot(0,0)
         }
 
         serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
@@ -707,7 +710,19 @@ namespace braillebot {
         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
             direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
             cubeNumber++
-            led.plot(4, 4)
+        }
+
+        if(cubeNumber == 1){
+            serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
+            let buf = serial.readBuffer(3)
+            for (let i = 0; i < 3; i++) {
+                rcvData[i] = buf.getUint8(i)  // 각 바이트를 배열에 복사
+            }
+
+            if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
+                direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
+                cubeNumber++
+            }
         }
 
         if (cubeNumber >= mode) return
