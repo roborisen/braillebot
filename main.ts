@@ -636,7 +636,7 @@ namespace braillebot {
     }
 
     function direct_cube_melody_control(melody_number: number, m1: number, m2: number, m3: number, serialPort: String) {
-        direct_send_gcube([GCUBE_REQ_LINEBOARD_MELODY, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), melody_number, m1, m2, m3, 0, 0, 0, 0], serialPort)
+        direct_send_gcube([GCUBE_REQ_LINEBOARD_MELODY, get_iv(GCUBE_REQ_LINEBOARD_MELODY), melody_number, m1, m2, m3, 0, 0, 0, 0], serialPort)
     }
 
 
@@ -1014,7 +1014,11 @@ namespace braillebot {
 //        showColor(tempData)
 //        basic.showNumber(tempData, 100)
         if(mode==0) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
-        else direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
+        else if(mode==1) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
+        else {
+            direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
+            direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
+        }
 
     }
 
