@@ -784,17 +784,11 @@ namespace braillebot {
 
 //        pins.servoWritePin(servoPin, 90)
 
-        pins.digitalWritePin(DigitalPin.P7, 0) // System LED ON
+        pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
 
         basic.pause(500)
 
-
-        if (veml6040_begin()) {
-            veml6040_init()
-            basic.showIcon(IconNames.Happy)
-        } else {
-            basic.showIcon(IconNames.Sad)
-        }
+        veml6040_init()
 
         checkWhiteBalance(0)
 
