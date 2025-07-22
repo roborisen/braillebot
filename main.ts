@@ -999,9 +999,12 @@ namespace braillebot {
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
         let tempData = detectColorKey()
 
-        basic.showNumber(red + 10000, 100)
-        basic.showNumber(green + 20000, 100)
-        basic.showNumber(blue + 30000, 100)
+//        basic.showNumber(red + 10000, 100)
+//        basic.showNumber(green + 20000, 100)
+//        basic.showNumber(blue + 30000, 100)
+        basic.showNumber(readRed() + 10000, 100)
+        basic.showNumber(readGreen() + 20000, 100)
+        basic.showNumber(readBlue() + 30000, 100)
 
     }
 
