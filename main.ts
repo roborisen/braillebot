@@ -1010,9 +1010,11 @@ namespace braillebot {
 
     //% block="Show data %mode"
     export function showData(mode: Colors): void{
-        let tempData = detectColorKey()
-        showColor(tempData)
-        basic.showNumber(tempData, 100)
+//        let tempData = detectColorKey()
+//        showColor(tempData)
+//        basic.showNumber(tempData, 100)
+        if(mode==0) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
+        else direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
 
     }
 
