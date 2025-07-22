@@ -1005,7 +1005,8 @@ namespace braillebot {
         else if(mode==1) tempData = readGreen()
         else if(mode==2) tempData = readBlue()
 
-        basic.showNumber(tempData, 100)
+//        basic.showNumber(tempData, 100)
+        serial.writeLine("Color: " + tempData)
     }
 
 
