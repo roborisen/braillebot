@@ -576,7 +576,7 @@ namespace braillebot {
         }
 
         serial.writeBuffer(buffer)
-        basic.pause(50)
+        basic.pause(20)
     }
 
     function get_iv(cmd: number): number {
