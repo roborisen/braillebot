@@ -517,7 +517,7 @@ namespace braillebot {
                 pins.digitalWritePin(redPin, 1) // RED on
                 pins.digitalWritePin(greenPin, 1) // GREEN on
                 pins.digitalWritePin(bluePin, 1) // BLUE on
-                for (let a = 0; a < 10; a++) {
+                for (let a = 0; a < 6; a++) {
                     if (a % 2 == 0) pins.digitalWritePin(redPin, 0) // RED on
                     else pins.digitalWritePin(redPin, 1) // RED off
                     basic.pause(500)
