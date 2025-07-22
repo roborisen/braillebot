@@ -139,8 +139,8 @@ namespace braillebot {
 
         let buf = pins.createBuffer(3)
         buf[0] = 0x00 //CMD register
-        buf[1] = 0x00
-        buf[2] = 0x10
+        buf[1] = 0x10
+        buf[2] = 0x00
         pins.i2cWriteBuffer(VEML6040_ADDR, buf)
 
         basic.pause(200)
@@ -993,11 +993,13 @@ namespace braillebot {
     //% block="Show data %mode"
     export function showData(mode: Colors): void{
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
-        let tempData = detectColorKey()
+//        let tempData = detectColorKey()
 
-        if(mode==0) tempData = red
-        else if(mode==1) tempData = green
-        else if(mode==2) tempData = blue
+        let tempData
+
+        if(mode==0) tempData = readRed()
+        else if(mode==1) tempData = readGreen()
+        else if(mode==2) tempData = readBlue()
 
         basic.showNumber(tempData, 100)
     }
