@@ -142,8 +142,6 @@ namespace braillebot {
         buf[1] = 0x10
         buf[2] = 0x00
         pins.i2cWriteBuffer(VEML6040_ADDR, buf)
-
-        basic.pause(1000)
     }
 
     function readColorRegister(register: number): number {
@@ -786,13 +784,13 @@ namespace braillebot {
         pins.digitalWritePin(greenPin, 1) // GREEN Off
         pins.digitalWritePin(bluePin, 1) // BLUE Off
 
-//        pins.servoWritePin(servoPin, 90)
+        pins.servoWritePin(servoPin, 90)
 
         pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
 
-        basic.pause(500)
-
         veml6040_init()
+
+        basic.pause(500)
 
         checkWhiteBalance(0)
 
@@ -801,8 +799,6 @@ namespace braillebot {
         wait_for_lineboard_cube_connected(2)
 
         allConnected = true
-
-
 
     }
 
