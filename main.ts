@@ -679,6 +679,7 @@ namespace braillebot {
         if (pinState == 1) {
             direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
         }
+
         pins.setPull(DigitalPin.P12, PinPullMode.PullUp)
         pinState = pins.digitalReadPin(DigitalPin.P12)
         if (pinState == 1) {
@@ -694,6 +695,7 @@ namespace braillebot {
         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
             direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
             cubeNumber++
+            led.plot(0,0)
         }
 
         serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
@@ -705,6 +707,7 @@ namespace braillebot {
         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
             direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
             cubeNumber++
+            led.plot(4, 4)
         }
 
         if (cubeNumber >= mode) return
