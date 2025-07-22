@@ -148,7 +148,7 @@ namespace braillebot {
 
     function readColorRegister(register: number): number {
 
-        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.Int8BE, false)
+        pins.i2cWriteNumber(VEML6040_ADDR, register, NumberFormat.UInt8BE, false)
         basic.pause(2)
 
 //        let low = pins.i2cReadNumber(VEML6040_ADDR, 1)
@@ -997,7 +997,7 @@ namespace braillebot {
     //% block="Show data %mode"
     export function showData(mode: Colors): void{
         //let tempRed = pins.analogReadPin(AnalogPin.P4)
-        let tempData = detectColorKey()
+//        let tempData = detectColorKey()
 
 //        basic.showNumber(red + 10000, 100)
 //        basic.showNumber(green + 20000, 100)
