@@ -712,25 +712,6 @@ namespace braillebot {
             cubeNumber++
         }
 
-        if(cubeNumber == 1){
-            pins.setPull(DigitalPin.P2, PinPullMode.PullUp)
-            let pinState = pins.digitalReadPin(DigitalPin.P2)
-            if (pinState == 1) {
-                direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
-            }
-
-            serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
-            let buf = serial.readBuffer(3)
-            for (let i = 0; i < 3; i++) {
-                rcvData[i] = buf.getUint8(i)  // 각 바이트를 배열에 복사
-            }
-
-            if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
-                direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
-                cubeNumber++
-            }
-        }
-
         if (cubeNumber >= mode) return
     }
 
