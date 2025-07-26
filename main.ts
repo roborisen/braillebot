@@ -629,9 +629,6 @@ namespace braillebot {
             robot_angle = 180
         }
 
-        if(serialPort == "left") led.plot(0,0)
-        else if(serialPort == "right") led.plot(4,4)
-
         direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, motor_speed, robot_angle, 0, 0, 0, 0, 0], serialPort)
     }
 
@@ -864,6 +861,12 @@ namespace braillebot {
     }
 
 
+    //% block="Stop"
+    export function Stop(): void {
+        motorSpeedControl(0,0)
+    }
+
+
     //% block="Line tracking to next color %mode"
     export function lineTrackingToNextColor(mode: Checking): void {
 
@@ -871,21 +874,19 @@ namespace braillebot {
 
         while (true) {
 
-            if (tracking) {
-                leftValue = pins.analogReadPin(AnalogPin.P3) // Left IR
-                rightValue = pins.analogReadPin(AnalogPin.P4) // Right IR
+            leftValue = pins.analogReadPin(AnalogPin.P3) // Left IR
+            rightValue = pins.analogReadPin(AnalogPin.P4) // Right IR
 
-                leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
-                rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
+            leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
+            rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
 
-                if (leftValue < 0) leftValue = 0
-                if (rightValue < 0) rightValue = 0
+            if (leftValue < 0) leftValue = 0
+            if (rightValue < 0) rightValue = 0
 
-                pid_input = (-1 * leftValue + rightValue) / 64.0
-                computePID() // PID calculation
+            pid_input = (-1 * leftValue + rightValue) / 64.0
+            computePID() // PID calculation
 
-                motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
-            }
+            motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
 
             colorCount++
 
@@ -899,7 +900,7 @@ namespace braillebot {
                 }
             }
 
-            if (mode == 1 && colorCount > 42) break  // exit skip near color mode ORANGE/CYAN
+            if (mode == 1 && colorCount > 42) mode = 0  // change mode after moving a distance
             if (colorCount > 625) break  // Searching next color time limit 10 msec
         }
         motorSpeedControl(0, 0)
