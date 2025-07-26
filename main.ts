@@ -840,7 +840,7 @@ namespace braillebot {
 
     //% block="Read Color Sensor"
     export function readColorSensor(): void {
-        let colorKey = detectColorKey();
+        colorKey = detectColorKey();
     }
 
 
