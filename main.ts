@@ -23,6 +23,7 @@ namespace braillebot {
     let tracking = false
     let allConnected = false
     let melodyMode = false
+    let melodyAction = true
 
     let baseSpeed = 70
     let deviation = 20
@@ -53,8 +54,9 @@ namespace braillebot {
     let leftOld = 0
     let rightOld = 0
 
-    let colorkey = 0
+    let colorKey = 0
     let objectGap = 0
+    let oldColor = 0
 
     let red = 0
     let green = 0
@@ -106,6 +108,11 @@ namespace braillebot {
         La = 440,
         Si = 494,
         HighDo = 523
+    }
+
+    export enum Action {
+        Action = 0,
+        Stop = 1
     }
 
     export enum Checking {
@@ -429,8 +436,8 @@ namespace braillebot {
         let whitecheck = true
 
         if (mode == 1) {
-            colorkey = detectColorKey()
-            if (colorkey != YELLOW_KEY) return
+            colorKey = detectColorKey()
+            if (colorKey != YELLOW_KEY) return
             else {
                 // 노란색 LED 점멸 5초
                 pins.digitalWritePin(redPin, 1)
@@ -452,7 +459,7 @@ namespace braillebot {
 
         for (let i = 0; i < 5; i++) {
             basic.pause(130)
-            colorkey = detectColorKey()
+            colorKey = detectColorKey()
 
             if ((red + green + blue) < 4000) {
                 whitecheck = false
@@ -640,11 +647,11 @@ namespace braillebot {
 
     function motorSpeedControl(leftSpeed: number, rightSpeed: number) {
         if (Math.abs(leftOld - leftSpeed) > 1) {
-            direct_cube_speed_control(-1 * leftSpeed, colorkey, objectGap, false)
+            direct_cube_speed_control(-1 * leftSpeed, colorKey, objectGap, false)
             leftOld = leftSpeed
         }
         if (Math.abs(rightOld - rightSpeed) > 1) {
-            direct_cube_speed_control(rightSpeed, colorkey, objectGap, true)
+            direct_cube_speed_control(rightSpeed, colorKey, objectGap, true)
             rightOld = rightSpeed
         }
     }
@@ -741,16 +748,16 @@ namespace braillebot {
         basic.pause(30)
 
         for (count = 0; count < 40; count++) {
-            colorkey = detectColorKey()
+            colorKey = detectColorKey()
 
-            if (colorkey == BLACK_KEY) {
+            if (colorKey == BLACK_KEY) {
                 motorSpeedControl(0, 0)
                 break
-            } else if (colorkey == ORANGE_KEY || colorkey == CYAN_KEY) {
+            } else if (colorKey == ORANGE_KEY || colorKey == CYAN_KEY) {
                 motorSpeedControl(0, 0)
-                showColor(colorkey)
+                showColor(colorKey)
                 break
-            } else if (colorkey == GREEN_KEY) {
+            } else if (colorKey == GREEN_KEY) {
                 motorSpeedControl(0, 0)
                 showColor(GREEN_KEY)
                 break
@@ -831,6 +838,7 @@ namespace braillebot {
     //% block="Show Color with $colorNumber"
     export function showColorKey(colorNumber: number): void {
         if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
+        if (oldColor != colorNumber) melodyAction = true
     }
 
 
@@ -839,12 +847,23 @@ namespace braillebot {
      * @param note1 1st tone
      * @param note2 2nd tone
      */
-    //% block="PlayTone 1st: %note1| 2nd: %note2"
-    export function playTwoNotes(note1: Note, note2: Note): void {
-        music.playTone(note1, music.beat(BeatFraction.Quarter))
-        basic.pause(50)
-        music.playTone(note2, music.beat(BeatFraction.Quarter))
-        basic.pause(1000)
+    //% block="PlayTone 1st: %note1| 2nd: %note2  Mode: %mode"
+    export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
+        if(mode===0){
+            music.playTone(note1, music.beat(BeatFraction.Quarter))
+            basic.pause(50)
+            music.playTone(note2, music.beat(BeatFraction.Quarter))
+            basic.pause(1000)
+        }else{
+            if(melodyAction){ // one time play when the robot is staying in stop position
+                melodyAction = false
+                oldColor = colorKey
+                music.playTone(note1, music.beat(BeatFraction.Quarter))
+                basic.pause(50)
+                music.playTone(note2, music.beat(BeatFraction.Quarter))
+                basic.pause(1000)
+            }
+        }
     }
 
 
