@@ -826,6 +826,7 @@ namespace braillebot {
     //% block="PlayTone 1st: %note1| 2nd: %note2"
     export function playTwoNotes(note1: Note, note2: Note): void {
         music.playTone(note1, music.beat(BeatFraction.Quarter))
+        basic.pause(50)
         music.playTone(note2, music.beat(BeatFraction.Quarter))
         basic.pause(1000)
     }
