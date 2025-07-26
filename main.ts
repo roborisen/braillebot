@@ -115,6 +115,16 @@ namespace braillebot {
         Stop = 1
     }
 
+    export enum Icons {
+        MoveForward = 0,
+        TurnLeft = 1,
+        TurnRight = 2,
+        UTurn = 3,
+        Stop = 4,
+        GripperOpen = 5,
+        GripperClose = 6
+    }
+
     export enum Checking {
         None = 0,
         Skip = 1
@@ -866,6 +876,87 @@ namespace braillebot {
         }
     }
 
+
+    //% block="showIcon %icon"
+    export function showIcon(icon: Icons): void {
+        /*
+            MoveForward = 0,
+            TurnLeft = 1,
+            TurnRight = 2,
+            UTurn = 3,
+            Stop = 4,
+            GripperOpen = 5,
+            GripperClose = 6
+        */
+        if(icon == 0){
+            basic.clearScreen()
+            led.plot(2, 0)
+            led.plot(1, 1)
+            led.plot(2, 1)
+            led.plot(3, 1)
+            led.plot(2, 2)
+            led.plot(2, 3)
+            led.plot(2, 4)
+        } else if (icon == 1) {
+            basic.clearScreen()
+            led.plot(0, 2)
+            led.plot(1, 1)
+            led.plot(1, 2)
+            led.plot(1, 3)
+            led.plot(2, 2)
+            led.plot(3, 2)
+            led.plot(4, 2)
+        } else if (icon == 2) {
+            basic.clearScreen()
+            led.plot(4, 2)
+            led.plot(3, 1)
+            led.plot(3, 2)
+            led.plot(3, 3)
+            led.plot(2, 2)
+            led.plot(1, 2)
+            led.plot(0, 2)
+        } else if (icon == 3) {
+            basic.clearScreen()
+            led.plot(2, 4)
+            led.plot(1, 3)
+            led.plot(2, 3)
+            led.plot(3, 3)
+            led.plot(2, 2)
+            led.plot(2, 1)
+            led.plot(2, 0)
+
+        } else if (icon == 4) {
+            basic.clearScreen()
+            led.plot(2,2)
+
+        } else if (icon == 5) {
+            basic.clearScreen()
+            led.plot(0, 1)
+            led.plot(0, 2)
+            led.plot(0, 3)
+            led.plot(1, 0)
+            led.plot(1, 4)
+            led.plot(2, 0)
+            led.plot(2, 4)
+            led.plot(3, 0)
+            led.plot(3, 4)
+            led.plot(4, 1)
+            led.plot(4, 2)
+            led.plot(4, 3)
+        } else if (icon == 6) {
+            basic.clearScreen()
+            led.plot(2, 1)
+            led.plot(2, 2)
+            led.plot(2, 3)
+            led.plot(1, 4)
+            led.plot(2, 4)
+            led.plot(3, 4)
+        }
+
+
+
+
+    }
 
     //% block="Set Echo ON"
     export function setEchoOn(): void {
