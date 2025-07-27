@@ -840,6 +840,7 @@ namespace braillebot {
 
     //% block="Read Color Sensor"
     export function readColorSensor(): void {
+        led.stopAnimation()
         colorKey = detectColorKey();
     }
 
@@ -879,6 +880,7 @@ namespace braillebot {
                 basic.pause(1000)
             }
         }
+        led.stopAnimation()
     }
 
 
@@ -1127,20 +1129,5 @@ namespace braillebot {
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
     }
-
-    //% block="Show data %mode"
-    export function showData(mode: Colors): void{
-//        let tempData = detectColorKey()
-//        showColor(tempData)
-//        basic.showNumber(tempData, 100)
-        if(mode==0) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
-        else if(mode==1) direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
-        else {
-            direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "left")
-            direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, 50, 50, 0, 0, 0, 0, 0], "right")
-        }
-
-    }
-
 
 }
