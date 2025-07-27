@@ -840,6 +840,7 @@ namespace braillebot {
 
     //% block="Read Color Sensor"
     export function readColorSensor(): void {
+        basic.clearScreen()
         led.stopAnimation()
         colorKey = detectColorKey();
     }
@@ -880,6 +881,7 @@ namespace braillebot {
                 basic.pause(1000)
             }
         }
+        basic.clearScreen()
         led.stopAnimation()
     }
 
