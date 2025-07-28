@@ -10,8 +10,8 @@ namespace braillebot {
     // 핀 설정
 
 
-    const redPin = DigitalPin.P13
-    const greenPin = DigitalPin.P14
+    const redPin = DigitalPin.P9
+    const greenPin = DigitalPin.P10
     const bluePin = DigitalPin.P15
 
     const servoPin = AnalogPin.P16
@@ -130,13 +130,12 @@ namespace braillebot {
         Skip = 1
     }
 
-    export enum Colors {
-        Red = 0,
-        Green = 1,
-        Blue = 2
+    export enum Lines {
+        Left = 0,
+        Right = 1
     }
 
-    serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
+    serial.redirect(SerialPin.P13, SerialPin.P14, 115200)
     serial.setRxBufferSize(10)
     serial.setTxBufferSize(10)
 
@@ -475,8 +474,8 @@ namespace braillebot {
                 whitecheck = false
             }
 
-            let ll = pins.analogReadPin(AnalogPin.P3)
-            let rr = pins.analogReadPin(AnalogPin.P4)
+            let ll = pins.analogReadPin(AnalogPin.P1)
+            let rr = pins.analogReadPin(AnalogPin.P2)
             rv += red
             gv += green
             bv += blue
@@ -549,8 +548,8 @@ namespace braillebot {
         } else {
             // loop 중 자동 재보정 조건
             if (balanceCount > 102 && tracking == false) {
-                let leftValue = pins.analogReadPin(AnalogPin.P3)
-                let rightValue = pins.analogReadPin(AnalogPin.P4)
+                let leftValue = pins.analogReadPin(AnalogPin.P1)
+                let rightValue = pins.analogReadPin(AnalogPin.P2)
                 leftValue = Math.map(leftValue, leftBalance, 1023, 0, 1023)
                 rightValue = Math.map(rightValue, rightBalance, 1023, 0, 1023)
                 if (leftValue < 0) leftValue = 0
@@ -587,11 +586,12 @@ namespace braillebot {
         const buffer = pins.createBufferFromArray(p)
 
         if (serialPort == "left") {
-            serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
+            serial.redirect(SerialPin.P13, SerialPin.P14, 115200)
         } else {
             serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
         }
 
+        basic.pause(10)
         serial.writeBuffer(buffer)
         basic.pause(30)
     }
@@ -619,7 +619,7 @@ namespace braillebot {
         if (isRightCube) {
             serial.redirect(SerialPin.P12, SerialPin.P8, BaudRate.BaudRate115200)
         } else {
-            serial.redirect(SerialPin.P2, SerialPin.P1, BaudRate.BaudRate115200)
+            serial.redirect(SerialPin.P13, SerialPin.P14, BaudRate.BaudRate115200)
         }
 
         serial.writeBuffer(buffer)
@@ -694,14 +694,14 @@ namespace braillebot {
         let timeout = 0
 
         while (!(cube1_connected && cube2_connected)) {
-            // 큐브1 (P2: RX, P1: TX)
+            // 큐브1 (P9: RX, P11: TX)
             if (!cube1_connected) {
-                pins.setPull(DigitalPin.P2, PinPullMode.PullUp)
-                let pinState1 = pins.digitalReadPin(DigitalPin.P2)
+                pins.setPull(DigitalPin.P9, PinPullMode.PullUp)
+                let pinState1 = pins.digitalReadPin(DigitalPin.P9)
                 if (pinState1 == 1) {
                     direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
-                    serial.redirect(SerialPin.P2, SerialPin.P1, 115200)
-                    basic.pause(100)
+                    serial.redirect(SerialPin.P13, SerialPin.P14, 115200)
+                    basic.pause(50)
                     let buf1 = serial.readBuffer(3)
                     if (buf1.length == 3) {
                         for (let i = 0; i < 3; i++) {
@@ -715,6 +715,8 @@ namespace braillebot {
                 }
             }
 
+            basic.pause(100) // 너무 빠른 루프 방지
+
             // 큐브2 (P12: RX, P8: TX)
             if (!cube2_connected) {
                 pins.setPull(DigitalPin.P12, PinPullMode.PullUp)
@@ -722,7 +724,7 @@ namespace braillebot {
                 if (pinState2 == 1) {
                     direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "right")
                     serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
-                    basic.pause(100)
+                    basic.pause(50)
                     let buf2 = serial.readBuffer(3)
                     if (buf2.length == 3) {
                         for (let i = 0; i < 3; i++) {
@@ -775,9 +777,9 @@ namespace braillebot {
             // IR 센서 라인 감지
             let lineValue = 0
             if (direction == 1) {
-                lineValue = pins.map(pins.analogReadPin(AnalogPin.P3), leftBalance, 1023, 0, 1023)
+                lineValue = pins.map(pins.analogReadPin(AnalogPin.P1), leftBalance, 1023, 0, 1023)
             } else {
-                lineValue = pins.map(pins.analogReadPin(AnalogPin.P4), rightBalance, 1023, 0, 1023)
+                lineValue = pins.map(pins.analogReadPin(AnalogPin.P2), rightBalance, 1023, 0, 1023)
             }
 
             if (lineValue > 500) {
@@ -1002,8 +1004,8 @@ namespace braillebot {
 
         while (true) {
 
-            leftValue = pins.analogReadPin(AnalogPin.P3) // Left IR
-            rightValue = pins.analogReadPin(AnalogPin.P4) // Right IR
+            leftValue = pins.analogReadPin(AnalogPin.P1) // Left IR
+            rightValue = pins.analogReadPin(AnalogPin.P2) // Right IR
 
             leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
             rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
@@ -1125,6 +1127,15 @@ namespace braillebot {
     //% block="Set motor speed Left: $left % and Right: $right"
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
+    }
+
+    //% block="Show data %mode"
+    export function showData(mode: Lines): void {
+        //        let tempData = detectColorKey()
+        //        showColor(tempData)
+        //        basic.showNumber(tempData, 100)
+        if (mode == 0) basic.showNumber(leftValue,100)
+        else if (mode == 1) basic.showNumber(rightValue, 100)
     }
 
 }
