@@ -1026,8 +1026,9 @@ namespace braillebot {
                     basic.pause(60) //wait for reading position
                     break
                 }
-                led.plot(leftValue*5/1024,0)
-                led.plot(rightValue*5/1024,4)
+                basic.clearScreen()
+                led.plot(0,leftValue*5/1024)
+                led.plot(4,rightValue*5/1024)
             }
 
             if (mode == 1 && colorCount > 42) mode = 0  // change mode after moving a distance
