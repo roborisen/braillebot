@@ -26,14 +26,14 @@ namespace braillebot {
     let melodyAction = true
 
     let baseSpeed = 70
-    let deviation = 20
-    let move_deviation = 3
+    let speedDeviation = 20
+    let moveDeviation = 3
     let blindColor = 0
 
     // PID 변수
-    let setpoint = 0
-    let pid_input = 0
-    let pid_output = 0
+    let setPoint = 0
+    let pidInput = 0
+    let pidOutput = 0
     let prevInput = 0
     let integral = 0
     let Kp = 3.5
@@ -575,12 +575,12 @@ namespace braillebot {
 
 
     function computePID() {
-        let error = setpoint - pid_input
+        let error = setPoint - pidInput
         integral += error
-        let derivative = pid_input - prevInput
-        pid_output = Kp * error + Ki * integral - Kd * derivative
-        pid_output = Math.constrain(pid_output, -1 * deviation, deviation)
-        prevInput = pid_input
+        let derivative = pidInput - prevInput
+        pidOutput = Kp * error + Ki * integral - Kd * derivative
+        pidOutput = Math.constrain(pidOutput, -1 * speedDeviation, speedDeviation)
+        prevInput = pidInput
     }
 
     function direct_send_gcube(p: number[], serialPort: String) {
@@ -738,8 +738,7 @@ namespace braillebot {
 
             basic.pause(100) // 너무 빠른 루프 방지
             timeout++
-            if (timeout > 200) {
-                basic.showIcon(IconNames.Sad) // 예: 20초 후에도 연결 안 되면 실패
+            if (timeout > 200) {// 예: 20초 후에도 연결 안 되면 실패
                 break
             }
         }
@@ -958,9 +957,6 @@ namespace braillebot {
             led.plot(3, 4)
         }
 
-
-
-
     }
 
     //% block="Set Echo ON"
@@ -971,7 +967,7 @@ namespace braillebot {
 
     //% block="Turn Left"
     export function turnLeft(): void {
-        moveRobot(baseSpeed, move_deviation)
+        moveRobot(baseSpeed, moveDeviation)
         rotateRobot(-1 * baseSpeed, 55)
         let detection_flag = rotateUntilDetectLine(0)
     }
@@ -979,7 +975,7 @@ namespace braillebot {
 
     //% block="Turn Right"
     export function turnRight(): void {
-        moveRobot(baseSpeed, move_deviation)
+        moveRobot(baseSpeed, moveDeviation)
         rotateRobot(baseSpeed, 55)
         let detection_flag = rotateUntilDetectLine(1)
     }
@@ -1015,10 +1011,10 @@ namespace braillebot {
             if (leftValue < 0) leftValue = 0
             if (rightValue < 0) rightValue = 0
 
-            pid_input = (-1 * leftValue + rightValue) / 64.0
+            pidInput = (-1 * leftValue + rightValue) / 64.0
             computePID() // PID calculation
 
-            motorSpeedControl(baseSpeed - pid_output, baseSpeed + pid_output)
+            motorSpeedControl(baseSpeed - pidOutput, baseSpeed + pidOutput)
 
             colorCount++
 
