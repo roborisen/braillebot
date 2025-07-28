@@ -35,7 +35,7 @@ namespace braillebot {
     let pidInput = 0
     let pidOutput = 0
     let prevInput = 0
-    let integral = 0
+    let integralSum = 0
     let Kp = 3.5
     let Ki = 0.0
     let Kd = 0.2
@@ -576,9 +576,9 @@ namespace braillebot {
 
     function computePID() {
         let error = setPoint - pidInput
-        integral += error
+        integralSum += error
         let derivative = pidInput - prevInput
-        pidOutput = Kp * error + Ki * integral - Kd * derivative
+        pidOutput = Kp * error + Ki * integralSum - Kd * derivative
         pidOutput = Math.constrain(pidOutput, -1 * speedDeviation, speedDeviation)
         prevInput = pidInput
     }
@@ -1026,6 +1026,8 @@ namespace braillebot {
                     basic.pause(60) //wait for reading position
                     break
                 }
+                led.plot(leftValue*5/1024,0)
+                led.plot(rightValue*5/1024,4)
             }
 
             if (mode == 1 && colorCount > 42) mode = 0  // change mode after moving a distance
