@@ -204,6 +204,7 @@ namespace braillebot {
 
 
     function showColor(color: number) {
+        led.enable(false)
         switch (color) {
             case RED_KEY:
                 pins.digitalWritePin(redPin, 0)
