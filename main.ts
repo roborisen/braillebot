@@ -694,10 +694,10 @@ namespace braillebot {
         let timeout = 0
 
         while (!(cube1_connected && cube2_connected)) {
-            // 큐브1 (P13: RX, P14: TX)
+            // 큐브1 (P14: RX, P15: TX)
             if (!cube1_connected) {
-                pins.setPull(DigitalPin.P13, PinPullMode.PullUp)
-                let pinState1 = pins.digitalReadPin(DigitalPin.P13)
+                pins.setPull(DigitalPin.P14, PinPullMode.PullUp)
+                let pinState1 = pins.digitalReadPin(DigitalPin.P14)
                 if (pinState1 == 1) {
                     direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
                     serial.redirect(SerialPin.P14, SerialPin.P15, 115200)
