@@ -287,7 +287,7 @@ namespace braillebot {
         bg = normblue / normgreen
 
         // 색상이 존재하는지 확인
-        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 0.9) {
+        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.0) {// 0.9->1.0 2025-07-29
             returnKey = true
         }
 
@@ -1028,12 +1028,9 @@ namespace braillebot {
             if (colorCount % 6 == 0 && mode == 0) { // every 16*6 = 96 msec check the Color sensor
                 let existColor = meetColor()
                 if (existColor) {
-                    basic.pause(90) //wait for reading position
+                    basic.pause(60) //wait for reading position
                     break
                 }
-                basic.clearScreen()
-                led.plot(0,leftValue*5/1024)
-                led.plot(4,rightValue*5/1024)
             }
 
             if (mode == 1 && colorCount > 42) mode = 0  // change mode after moving a distance
