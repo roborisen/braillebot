@@ -895,6 +895,8 @@ namespace braillebot {
             GripperOpen = 5,
             GripperClose = 6
         */
+        led.enable(true)
+        
         if(icon == 0){
             basic.clearScreen()
             led.plot(2, 0)
