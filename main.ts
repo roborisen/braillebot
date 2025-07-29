@@ -27,7 +27,7 @@ namespace braillebot {
 
     let baseSpeed = 70
     let speedDeviation = 20
-    let moveDeviation = 3
+    let moveDeviation = 4
     let blindColor = 0
 
     // PID 변수
