@@ -1086,7 +1086,7 @@ namespace braillebot {
 
 
     //% block="Line tracking to next color"
-    export function lineTrackingToNextColor(mode: Checking): void {
+    export function lineTrackingToNextColor(): void {
 
         colorCount = 0;
 
