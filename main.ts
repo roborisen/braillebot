@@ -125,6 +125,16 @@ namespace braillebot {
         GripperClose = 6
     }
 
+    export enum Opening {
+        JustOpen = 0,
+		MovingOpen = 1
+    }
+
+    export enum Closing {
+        JustClose = 0,
+		MovingClose = 1
+    }
+
     export enum Checking {
         None = 0,
         Skip = 1
@@ -810,55 +820,9 @@ namespace braillebot {
     }
 
 
-    /**
-     * Setup braille bot
-     */
-    //% block="Setup braille bot"
-    export function setupBrailleBot(): void {
-        pins.digitalWritePin(redPin, 1) // RED Off
-        pins.digitalWritePin(greenPin, 1) // GREEN Off
-        pins.digitalWritePin(bluePin, 1) // BLUE Off
-
-        pins.servoWritePin(servoPin, 90)
-
-        pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
-
-        serial.redirect(SerialPin.P14, SerialPin.P15, 115200)
-        serial.setRxBufferSize(10)
-        serial.setTxBufferSize(10)
-
-        veml6040_init()
-
-        basic.pause(500)
-
-        checkWhiteBalance(0)
-
-        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
-
-        waitForLineboardCubeConnected(2)
-
-        allConnected = true
-
-    }
 
 
-    //% block="Read Color Sensor"
-    export function readColorSensor(): void {
-        colorKey = detectColorKey();
-    }
 
-
-    //% block="Colorkey"
-    export function getColorKey(): number {
-        return colorKey
-    }
-
-
-    //% block="Show Color with $colorNumber"
-    export function showColorKey(colorNumber: number): void {
-        if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
-        if (oldColor != colorNumber) melodyAction = true
-    }
 
 
     /**
@@ -971,40 +935,109 @@ namespace braillebot {
 
     }
 
+
+
+
+    //% block="Rotate $degree degree , with speed : $speed %"
+    // @param angle the angle of rotation
+    // @param speed robot speed
+    export function rotateBraillebot(speed: number, degree: number): void {
+        rotateRobot(speed, degree)
+    }
+
+    //% block="Move forward $distance cm , with speed : $speed %"
+    // @param distance robot distance
+    // @param speed robot speed
+    export function moveBraillebot(speed: number, distance: number): void {
+        moveRobot(speed, distance)
+    }
+
+    //% block="Set motor speed Left: $left % and Right: $right"
+    // @param left speed of left wheel of the robot
+    // @param right speed of right wheel of the robot
+    export function setMotorSpeed(left: number, right: number): void {
+        motorSpeedControl(left, right)
+    }
+
+
     //% block="Set Echo ON"
     export function setEchoOn(): void {
         melodyMode = true
     }
 
 
-    //% block="Turn Left"
-    export function turnLeft(): void {
-        moveRobot(baseSpeed, moveDeviation)
-        rotateRobot(-1 * baseSpeed, 55)
-        let detection_flag = rotateUntilDetectLine(0)
+    //% block="Gripper Close $mode"
+    // @param mode Simple (Closing only) or Full (Moving + Closing)
+    export function gripperCloseBlock(mode: Closing): void {
+        if (mode) {
+            let detection_flag = false
+            motorSpeedControl(0, 0)
+            pins.servoWritePin(servoPin, 35)
+            basic.pause(300)
+
+            moveRobot(baseSpeed, 9)
+            basic.pause(300)
+
+            for (let i = 40; i <= 90; i += 5) {
+                pins.servoWritePin(servoPin, i)
+                basic.pause(100)
+            }
+
+            basic.pause(300)
+            moveRobot(-1 * baseSpeed, 8)
+            basic.pause(300)
+
+            rotateRobot(-50, 60)
+            detection_flag = rotateUntilDetectLine(0)
+
+            if (detection_flag) {
+                tracking = true
+            }
+
+        } else {
+            basic.pause(300)
+            for (let i = 40; i <= 90; i += 5) {
+                pins.servoWritePin(servoPin, i)
+                basic.pause(100)
+            }
+            basic.pause(300)
+        }
     }
 
 
-    //% block="Turn Right"
-    export function turnRight(): void {
-        moveRobot(baseSpeed, moveDeviation)
-        rotateRobot(baseSpeed, 55)
-        let detection_flag = rotateUntilDetectLine(1)
+    //% block="Gripper Open $mode"
+    // @param mode Simple (Opening only) or Full (Moving + Opening)
+    export function gripperOpenBlock(mode: Opening): void {
+        if (mode) {
+            let detection_flag = false
+            motorSpeedControl(0, 0)
+            basic.pause(300)
+
+            moveRobot(baseSpeed, 9)
+            basic.pause(300)
+
+            pins.servoWritePin(servoPin, 35)
+            basic.pause(300)
+
+            moveRobot(-1 * baseSpeed, 8)
+            basic.pause(300)
+
+            pins.servoWritePin(servoPin, 90)
+            basic.pause(300)
+
+            rotateRobot(-50, 60)
+            detection_flag = rotateUntilDetectLine(0)
+
+            if (detection_flag) {
+                tracking = true
+            }
+        } else {
+            basic.pause(300)
+            pins.servoWritePin(servoPin, 35)
+            basic.pause(300)
+        }
     }
 
-
-    //% block="U turn"
-    export function uTurn(): void {
-        moveRobot(baseSpeed, 2)
-        rotateRobot(-50, 90)
-        let detection_flag = rotateUntilDetectLine(0)
-    }
-
-
-    //% block="Stop"
-    export function stop(): void {
-        motorSpeedControl(0, 0)
-    }
 
 
     //% block="Line tracking to next color %mode"
@@ -1049,100 +1082,84 @@ namespace braillebot {
     }
 
 
-    //% block="Gripper Open $mode"
-    // @param mode Simple (Opening only) or Full (Moving + Opening)
-    export function gripperOpenBlock(mode: boolean): void {
-        if (mode) {
-            let detection_flag = false
-            motorSpeedControl(0, 0)
-            basic.pause(300)
-
-            moveRobot(baseSpeed, 9)
-            basic.pause(300)
-
-            pins.servoWritePin(servoPin, 35)
-            basic.pause(300)
-
-            moveRobot(-1 * baseSpeed, 8)
-            basic.pause(300)
-
-            pins.servoWritePin(servoPin, 90)
-            basic.pause(300)
-
-            rotateRobot(-50, 60)
-            detection_flag = rotateUntilDetectLine(0)
-
-            if (detection_flag) {
-                tracking = true
-            }
-        } else {
-            basic.pause(300)
-            pins.servoWritePin(servoPin, 35)
-            basic.pause(300)
-        }
+    //% block="Stop"
+    export function stop(): void {
+        motorSpeedControl(0, 0)
     }
 
 
-    //% block="Gripper Close $mode"
-    // @param mode Simple (Closing only) or Full (Moving + Closing)
-    export function gripperCloseBlock(mode: boolean): void {
-        if (mode) {
-            let detection_flag = false
-            motorSpeedControl(0, 0)
-            pins.servoWritePin(servoPin, 35)
-            basic.pause(300)
-
-            moveRobot(baseSpeed, 9)
-            basic.pause(300)
-
-            for (let i = 40; i <= 90; i += 5) {
-                pins.servoWritePin(servoPin, i)
-                basic.pause(100)
-            }
-
-            basic.pause(300)
-            moveRobot(-1 * baseSpeed, 8)
-            basic.pause(300)
-
-            rotateRobot(-50, 60)
-            detection_flag = rotateUntilDetectLine(0)
-
-            if (detection_flag) {
-                tracking = true
-            }
-
-        } else {
-            basic.pause(300)
-            for (let i = 40; i <= 90; i += 5) {
-                pins.servoWritePin(servoPin, i)
-                basic.pause(100)
-            }
-            basic.pause(300)
-        }
+    //% block="U turn"
+    export function uTurn(): void {
+        moveRobot(baseSpeed, 2)
+        rotateRobot(-50, 90)
+        let detection_flag = rotateUntilDetectLine(0)
     }
 
 
-    //% block="Move forward $distance cm , with speed : $speed %"
-    // @param distance robot distance
-    // @param speed robot speed
-    export function moveBraillebot(speed: number, distance: number): void {
-        moveRobot(speed, distance)
+    //% block="Turn Right"
+    export function turnRight(): void {
+        moveRobot(baseSpeed, moveDeviation)
+        rotateRobot(baseSpeed, 55)
+        let detection_flag = rotateUntilDetectLine(1)
     }
 
 
-    //% block="Rotate $degree degree , with speed : $speed %"
-    // @param angle the angle of rotation
-    // @param speed robot speed
-    export function rotateBraillebot(speed: number, degree: number): void {
-        rotateRobot(speed, degree)
+    //% block="Turn Left"
+    export function turnLeft(): void {
+        moveRobot(baseSpeed, moveDeviation)
+        rotateRobot(-1 * baseSpeed, 55)
+        let detection_flag = rotateUntilDetectLine(0)
     }
 
 
-    //% block="Set motor speed Left: $left % and Right: $right"
-    // @param left speed of left wheel of the robot
-    // @param right speed of right wheel of the robot
-    export function setMotorSpeed(left: number, right: number): void {
-        motorSpeedControl(left, right)
+    //% block="Show Color with $colorNumber"
+    export function showColorKey(colorNumber: number): void {
+        if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
+        if (oldColor != colorNumber) melodyAction = true
+    }
+
+
+    //% block="Read Color Sensor"
+    export function readColorSensor(): void {
+        colorKey = detectColorKey();
+    }
+
+
+    //% block="Colorkey"
+    export function getColorKey(): number {
+        return colorKey
+    }
+
+
+    /**
+     * Setup braille bot
+     */
+    //% block="Setup braille bot"
+    export function setupBrailleBot(): void {
+        pins.digitalWritePin(redPin, 1) // RED Off
+        pins.digitalWritePin(greenPin, 1) // GREEN Off
+        pins.digitalWritePin(bluePin, 1) // BLUE Off
+
+        pins.servoWritePin(servoPin, 90)
+
+        pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
+
+        serial.redirect(SerialPin.P14, SerialPin.P15, 115200)
+        serial.setRxBufferSize(10)
+        serial.setTxBufferSize(10)
+
+        veml6040_init()
+
+        basic.pause(500)
+
+        checkWhiteBalance(0)
+
+        pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
+
+        waitForLineboardCubeConnected(2)
+
+        allConnected = true
+
     }
 
 
