@@ -126,13 +126,13 @@ namespace braillebot {
     }
 
     export enum Opening {
-        JustOpen = 0, 
-		MovingOpen = 1
+        JustOpen = 0,
+        MovingOpen = 1
     }
 
     export enum Closing {
-        JustClose = 0, 
-		MovingClose = 1
+        JustClose = 0,
+        MovingClose = 1
     }
 
     export enum Checking {
@@ -1042,11 +1042,12 @@ namespace braillebot {
 
 
 
-    //% block="Line tracking to next color %mode"
-    // @param mode Line flowlling with or without near-next colr skip mode
-    export function lineTrackingToNextColor(mode: Checking): void {
+    //% block="Line tracking while skipping adjacent colors"
+    export function lineTrackingSkipAndNextColor(): void {
 
-        colorCount = 0;
+        colorCount = 0
+
+        let mode = 1
 
         while (true) {
 
@@ -1077,6 +1078,46 @@ namespace braillebot {
             }
 
             if (mode == 1 && colorCount > 42) mode = 0  // change mode after moving a distance
+            if (colorCount > 625) break  // Searching next color time limit 10 msec
+        }
+        motorSpeedControl(0, 0)
+        basic.pause(50)
+    }
+
+
+    //% block="Line tracking to next color"
+    export function lineTrackingToNextColor(mode: Checking): void {
+
+        colorCount = 0;
+
+        while (true) {
+
+            leftValue = pins.analogReadPin(AnalogPin.P1) // Left IR
+            rightValue = pins.analogReadPin(AnalogPin.P2) // Right IR
+
+            leftValue = mapToRange(leftValue, leftBalance, 1023, 0, 1023)
+            rightValue = mapToRange(rightValue, rightBalance, 1023, 0, 1023)
+
+            if (leftValue < 0) leftValue = 0
+            if (rightValue < 0) rightValue = 0
+
+            pidInput = (-1 * leftValue + rightValue) / 64.0
+            computePID() // PID calculation
+
+            motorSpeedControl(baseSpeed - pidOutput, baseSpeed + pidOutput)
+
+            colorCount++
+
+            basic.pause(16) // 16ms line tracking
+
+            if (colorCount % 6 == 0) { // every 16*6 = 96 msec check the Color sensor
+                let existColor = meetColor()
+                if (existColor) {
+                    basic.pause(40) //wait for reading position
+                    break
+                }
+            }
+
             if (colorCount > 625) break  // Searching next color time limit 10 msec
         }
         motorSpeedControl(0, 0)
