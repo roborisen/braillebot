@@ -135,9 +135,6 @@ namespace braillebot {
         Right = 1
     }
 
-    serial.redirect(SerialPin.P14, SerialPin.P15, 115200)
-    serial.setRxBufferSize(10)
-    serial.setTxBufferSize(10)
 
     function veml6040_begin(): boolean {
         let sensorExists = false
@@ -583,7 +580,7 @@ namespace braillebot {
         prevInput = pidInput
     }
 
-    function direct_send_gcube(p: number[], serialPort: String) {
+    function directSendGcube(p: number[], serialPort: String) {
         const buffer = pins.createBufferFromArray(p)
 
         if (serialPort == "left") {
@@ -597,17 +594,17 @@ namespace braillebot {
         basic.pause(30)
     }
 
-    function get_iv(cmd: number): number {
+    function getInvert(cmd: number): number {
         return Math.floor(cmd / 16) + (cmd & 0x0F) * 16
     }
 
-    function direct_cube_speed_control(motor_speed: number, colorkey: number, distance: number, isRightCube: boolean) {
+    function directCubeSpeedControl(motor_speed: number, colorkey: number, distance: number, isRightCube: boolean) {
         if (motor_speed < -100) motor_speed = -100
         else if (motor_speed > 100) motor_speed = 100
 
         let buffer = pins.createBuffer(10)
         buffer.setUint8(0, GCUBE_REQ_LINEBOARD_SPEED)
-        buffer.setUint8(1, get_iv(GCUBE_REQ_LINEBOARD_SPEED))
+        buffer.setUint8(1, getInvert(GCUBE_REQ_LINEBOARD_SPEED))
         buffer.setUint8(2, 0)
         buffer.setUint8(3, motor_speed)  // signed
         buffer.setUint8(4, colorkey)
@@ -627,7 +624,7 @@ namespace braillebot {
     }
 
 
-    function direct_cube_move_control(motor_speed: number, robot_distance: number, serialPort: String) {
+    function directCubeMoveControl(motor_speed: number, robot_distance: number, serialPort: String) {
         if (robot_distance < 0) {
             motor_speed = motor_speed * -1
         }
@@ -635,10 +632,10 @@ namespace braillebot {
         if (robot_distance > 200) {
             robot_distance = 200
         }
-        direct_send_gcube([GCUBE_REQ_LINEBOARD_MOVE, get_iv(GCUBE_REQ_LINEBOARD_MOVE), 0, motor_speed, robot_distance, 0, 0, 0, 0, 0], serialPort)
+        directSendGcube([GCUBE_REQ_LINEBOARD_MOVE, getInvert(GCUBE_REQ_LINEBOARD_MOVE), 0, motor_speed, robot_distance, 0, 0, 0, 0, 0], serialPort)
     }
 
-    function direct_cube_rotate_control(motor_speed: number, robot_angle: number, serialPort: String) {
+    function directCubeRotateControl(motor_speed: number, robot_angle: number, serialPort: String) {
         if (robot_angle < 0) {
             motor_speed = motor_speed * -1
         }
@@ -647,29 +644,29 @@ namespace braillebot {
             robot_angle = 180
         }
 
-        direct_send_gcube([GCUBE_REQ_LINEBOARD_ROTATE, get_iv(GCUBE_REQ_LINEBOARD_ROTATE), 0, motor_speed, robot_angle, 0, 0, 0, 0, 0], serialPort)
+        directSendGcube([GCUBE_REQ_LINEBOARD_ROTATE, getInvert(GCUBE_REQ_LINEBOARD_ROTATE), 0, motor_speed, robot_angle, 0, 0, 0, 0, 0], serialPort)
     }
 
-    function direct_cube_melody_control(melody_number: number, m1: number, m2: number, m3: number, serialPort: String) {
-        direct_send_gcube([GCUBE_REQ_LINEBOARD_MELODY, get_iv(GCUBE_REQ_LINEBOARD_MELODY), melody_number, m1, m2, m3, 0, 0, 0, 0], serialPort)
+    function directCubeMelodyControl(melody_number: number, m1: number, m2: number, m3: number, serialPort: String) {
+        directSendGcube([GCUBE_REQ_LINEBOARD_MELODY, getInvert(GCUBE_REQ_LINEBOARD_MELODY), melody_number, m1, m2, m3, 0, 0, 0, 0], serialPort)
     }
 
 
 
     function motorSpeedControl(leftSpeed: number, rightSpeed: number) {
         if (Math.abs(leftOld - leftSpeed) > 1) {
-            direct_cube_speed_control(-1 * leftSpeed, colorKey, objectGap, false)
+            directCubeSpeedControl(-1 * leftSpeed, colorKey, objectGap, false)
             leftOld = leftSpeed
         }
         if (Math.abs(rightOld - rightSpeed) > 1) {
-            direct_cube_speed_control(rightSpeed, colorKey, objectGap, true)
+            directCubeSpeedControl(rightSpeed, colorKey, objectGap, true)
             rightOld = rightSpeed
         }
     }
 
     function moveRobot(speed: number, distance: number) {
-        direct_cube_move_control(speed, distance, "right") // G2
-        direct_cube_move_control(-1 * speed, distance, "left") // G1
+        directCubeMoveControl(speed, distance, "right") // G2
+        directCubeMoveControl(-1 * speed, distance, "left") // G1
 
         if (Math.abs(speed) >= 10) {
             let delayTime = Math.idiv(10000 * Math.abs(distance), Math.abs(speed))
@@ -678,8 +675,8 @@ namespace braillebot {
     }
 
     function rotateRobot(speed: number, angle: number) {
-        direct_cube_rotate_control(-1 * speed, angle, "right") // G2
-        direct_cube_rotate_control(-1 * speed, angle, "left") // G1
+        directCubeRotateControl(-1 * speed, angle, "right") // G2
+        directCubeRotateControl(-1 * speed, angle, "left") // G1
 
         if (Math.abs(speed) >= 10) {
             let delayTime = Math.idiv(667 * Math.abs(angle), Math.abs(speed))
@@ -688,7 +685,7 @@ namespace braillebot {
     }
 
 
-    function wait_for_lineboard_cube_connected(mode: number) {
+    function waitForLineboardCubeConnected(mode: number) {
         let rcvData: number[] = [0, 0, 0]
         let cube1_connected = false
         let cube2_connected = false
@@ -700,7 +697,7 @@ namespace braillebot {
                 pins.setPull(DigitalPin.P14, PinPullMode.PullUp)
                 let pinState1 = pins.digitalReadPin(DigitalPin.P14)
                 if (pinState1 == 1) {
-                    direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
+                    directSendGcube([GCUBE_CONTROL_COMMAND, getInvert(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "left")
                     serial.redirect(SerialPin.P14, SerialPin.P15, 115200)
                     basic.pause(50)
                     let buf1 = serial.readBuffer(3)
@@ -709,7 +706,7 @@ namespace braillebot {
                             rcvData[i] = buf1.getUint8(i)
                         }
                         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
-                            direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
+                            directSendGcube([GCUBE_GET_BOARD_ID, getInvert(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
                             cube1_connected = true
                         }
                     }
@@ -723,7 +720,7 @@ namespace braillebot {
                 pins.setPull(DigitalPin.P12, PinPullMode.PullUp)
                 let pinState2 = pins.digitalReadPin(DigitalPin.P12)
                 if (pinState2 == 1) {
-                    direct_send_gcube([GCUBE_CONTROL_COMMAND, get_iv(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "right")
+                    directSendGcube([GCUBE_CONTROL_COMMAND, getInvert(GCUBE_CONTROL_COMMAND), 1, 0, 0, 0, 0, 0, 0, 0], "right")
                     serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
                     basic.pause(50)
                     let buf2 = serial.readBuffer(3)
@@ -732,7 +729,7 @@ namespace braillebot {
                             rcvData[i] = buf2.getUint8(i)
                         }
                         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
-                            direct_send_gcube([GCUBE_GET_BOARD_ID, get_iv(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
+                            directSendGcube([GCUBE_GET_BOARD_ID, getInvert(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
                             cube2_connected = true
                         }
                     }
@@ -826,6 +823,10 @@ namespace braillebot {
 
         pins.digitalWritePin(DigitalPin.P7, 1) // System LED ON
 
+        serial.redirect(SerialPin.P14, SerialPin.P15, 115200)
+        serial.setRxBufferSize(10)
+        serial.setTxBufferSize(10)
+
         veml6040_init()
 
         basic.pause(500)
@@ -834,7 +835,7 @@ namespace braillebot {
 
         pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
 
-        wait_for_lineboard_cube_connected(2)
+        waitForLineboardCubeConnected(2)
 
         allConnected = true
 
@@ -862,18 +863,22 @@ namespace braillebot {
 
     /**
      * 두 개의 음을 1박자씩 연주하기
-     * @param note1 1st tone
-     * @param note2 2nd tone
+     * @param note1 첫번째 음
+     * @param note2 두번째 음
+     * @param mode 동작할 때와 멈출 때의 멜로디
      */
     //% block="PlayTone 1st: %note1| 2nd: %note2  Mode: %mode"
+    // @param note1 1st tone
+    // @param note2 2nd tone
+    // @param Melody for Action status or Stop status
     export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
-        if(mode===0){
+        if (mode === 0) {
             music.playTone(note1, music.beat(BeatFraction.Quarter))
             basic.pause(50)
             music.playTone(note2, music.beat(BeatFraction.Quarter))
             basic.pause(1000)
-        }else{
-            if(melodyAction){ // one time play when the robot is staying in stop position
+        } else {
+            if (melodyAction) { // one time play when the robot is staying in stop position
                 melodyAction = false
                 oldColor = colorKey
                 music.playTone(note1, music.beat(BeatFraction.Quarter))
@@ -886,6 +891,7 @@ namespace braillebot {
 
 
     //% block="showIcon %icon"
+    // @param icon Display the icon for the corresponding robot motion 
     export function showIcon(icon: Icons): void {
         /*
             MoveForward = 0,
@@ -897,8 +903,8 @@ namespace braillebot {
             GripperClose = 6
         */
         led.enable(true)
-        
-        if(icon == 0){
+
+        if (icon == 0) {
             basic.clearScreen()
             led.plot(2, 0)
             led.plot(1, 1)
@@ -937,7 +943,7 @@ namespace braillebot {
 
         } else if (icon == 4) {
             basic.clearScreen()
-            led.plot(2,2)
+            led.plot(2, 2)
 
         } else if (icon == 5) {
             basic.clearScreen()
@@ -996,12 +1002,13 @@ namespace braillebot {
 
 
     //% block="Stop"
-    export function Stop(): void {
-        motorSpeedControl(0,0)
+    export function stop(): void {
+        motorSpeedControl(0, 0)
     }
 
 
     //% block="Line tracking to next color %mode"
+    // @param mode Line flowlling with or without near-next colr skip mode
     export function lineTrackingToNextColor(mode: Checking): void {
 
         colorCount = 0;
@@ -1043,6 +1050,7 @@ namespace braillebot {
 
 
     //% block="Gripper Open $mode"
+    // @param mode Simple (Opening only) or Full (Moving + Opening)
     export function gripperOpenBlock(mode: boolean): void {
         if (mode) {
             let detection_flag = false
@@ -1076,6 +1084,7 @@ namespace braillebot {
 
 
     //% block="Gripper Close $mode"
+    // @param mode Simple (Closing only) or Full (Moving + Closing)
     export function gripperCloseBlock(mode: boolean): void {
         if (mode) {
             let detection_flag = false
@@ -1114,29 +1123,27 @@ namespace braillebot {
 
 
     //% block="Move forward $distance cm , with speed : $speed %"
+    // @param distance robot distance
+    // @param speed robot speed
     export function moveBraillebot(speed: number, distance: number): void {
         moveRobot(speed, distance)
     }
 
 
     //% block="Rotate $degree degree , with speed : $speed %"
+    // @param angle the angle of rotation
+    // @param speed robot speed
     export function rotateBraillebot(speed: number, degree: number): void {
         rotateRobot(speed, degree)
     }
 
 
     //% block="Set motor speed Left: $left % and Right: $right"
+    // @param left speed of left wheel of the robot
+    // @param right speed of right wheel of the robot
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
     }
 
-    //% block="Show data %mode"
-    export function showData(mode: Lines): void {
-        //        let tempData = detectColorKey()
-        //        showColor(tempData)
-        //        basic.showNumber(tempData, 100)
-        if (mode == 0) basic.showNumber(leftValue,100)
-        else if (mode == 1) basic.showNumber(rightValue, 100)
-    }
 
 }
