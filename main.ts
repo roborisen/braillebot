@@ -126,12 +126,12 @@ namespace braillebot {
     }
 
     export enum Opening {
-        JustOpen = 0,
+        JustOpen = 0, 
 		MovingOpen = 1
     }
 
     export enum Closing {
-        JustClose = 0,
+        JustClose = 0, 
 		MovingClose = 1
     }
 
@@ -825,32 +825,28 @@ namespace braillebot {
 
 
 
-    /**
-     * 두 개의 음을 1박자씩 연주하기
-     * @param note1 첫번째 음
-     * @param note2 두번째 음
-     * @param mode 동작할 때와 멈출 때의 멜로디
-     */
-    //% block="PlayTone 1st: %note1| 2nd: %note2  Mode: %mode"
-    // @param note1 1st tone
-    // @param note2 2nd tone
-    // @param Melody for Action status or Stop status
-    export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
-        if (mode === 0) {
-            music.playTone(note1, music.beat(BeatFraction.Quarter))
-            basic.pause(50)
-            music.playTone(note2, music.beat(BeatFraction.Quarter))
-            basic.pause(1000)
-        } else {
-            if (melodyAction) { // one time play when the robot is staying in stop position
-                melodyAction = false
-                oldColor = colorKey
-                music.playTone(note1, music.beat(BeatFraction.Quarter))
-                basic.pause(50)
-                music.playTone(note2, music.beat(BeatFraction.Quarter))
-                basic.pause(1000)
-            }
-        }
+
+
+
+    //% block="Rotate $degree degree , with speed : $speed %"
+    // @param angle the angle of rotation
+    // @param speed robot speed
+    export function rotateBraillebot(speed: number, degree: number): void {
+        rotateRobot(speed, degree)
+    }
+
+    //% block="Move forward $distance cm , with speed : $speed %"
+    // @param distance robot distance
+    // @param speed robot speed
+    export function moveBraillebot(speed: number, distance: number): void {
+        moveRobot(speed, distance)
+    }
+
+    //% block="Set motor speed Left: $left % and Right: $right"
+    // @param left speed of left wheel of the robot
+    // @param right speed of right wheel of the robot
+    export function setMotorSpeed(left: number, right: number): void {
+        motorSpeedControl(left, right)
     }
 
 
@@ -936,28 +932,34 @@ namespace braillebot {
     }
 
 
-
-
-    //% block="Rotate $degree degree , with speed : $speed %"
-    // @param angle the angle of rotation
-    // @param speed robot speed
-    export function rotateBraillebot(speed: number, degree: number): void {
-        rotateRobot(speed, degree)
+    /**
+     * 두 개의 음을 1박자씩 연주하기
+     * @param note1 첫번째 음
+     * @param note2 두번째 음
+     * @param mode 동작할 때와 멈출 때의 멜로디
+     */
+    //% block="PlayTone 1st: %note1| 2nd: %note2  Mode: %mode"
+    // @param note1 1st tone
+    // @param note2 2nd tone
+    // @param Melody for Action status or Stop status
+    export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
+        if (mode === 0) {
+            music.playTone(note1, music.beat(BeatFraction.Quarter))
+            basic.pause(50)
+            music.playTone(note2, music.beat(BeatFraction.Quarter))
+            basic.pause(1000)
+        } else {
+            if (melodyAction) { // one time play when the robot is staying in stop position
+                melodyAction = false
+                oldColor = colorKey
+                music.playTone(note1, music.beat(BeatFraction.Quarter))
+                basic.pause(50)
+                music.playTone(note2, music.beat(BeatFraction.Quarter))
+                basic.pause(1000)
+            }
+        }
     }
 
-    //% block="Move forward $distance cm , with speed : $speed %"
-    // @param distance robot distance
-    // @param speed robot speed
-    export function moveBraillebot(speed: number, distance: number): void {
-        moveRobot(speed, distance)
-    }
-
-    //% block="Set motor speed Left: $left % and Right: $right"
-    // @param left speed of left wheel of the robot
-    // @param right speed of right wheel of the robot
-    export function setMotorSpeed(left: number, right: number): void {
-        motorSpeedControl(left, right)
-    }
 
 
     //% block="Set Echo ON"
