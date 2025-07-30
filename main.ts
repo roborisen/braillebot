@@ -716,7 +716,7 @@ namespace braillebot {
                 }
             }
 
-            basic.pause(100) // 너무 빠른 루프 방지
+            //basic.pause(100) // 너무 빠른 루프 방지
 
             // 큐브2 (P12: RX, P8: TX)
             if (!cube2_connected) {
@@ -739,7 +739,8 @@ namespace braillebot {
                 }
             }
 
-            basic.pause(100) // 너무 빠른 루프 방지
+            //basic.pause(100) // 너무 빠른 루프 방지
+
             timeout++
             if (timeout > 200) {// 예: 20초 후에도 연결 안 되면 실패
                 break
