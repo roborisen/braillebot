@@ -943,6 +943,9 @@ namespace braillebot {
     // @param note2 2nd tone
     // @param Melody for Action status or Stop status
     export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
+
+        if (!melodyMode) return
+
         if (mode === 0) {
             music.playTone(note1, music.beat(BeatFraction.Quarter))
             basic.pause(50)
