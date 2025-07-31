@@ -10,7 +10,11 @@
     },
     "files": [
         "main.ts",
-        "README.md"
+        "README.md",
+        "_locales/ko/braillebot-jsdoc-strings.json",
+        "_locales/ko/braillebot-strings.json",
+        "_locales/ja/braillebot-jsdoc-strings.json",
+        "_locales/ja/braillebot-strings.json"
     ],
     "testFiles": [
         "test.ts"
