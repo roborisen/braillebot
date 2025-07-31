@@ -1,24 +1,107 @@
+# BrailleBot MakeCode Extension
 
-> 이 페이지를 [https://roborisen.github.io/braillebot/](https://roborisen.github.io/braillebot/)으로 열기
+This is the official MakeCode extension for the **BrailleBot** robot, designed to work with micro\:bit and G-Cube-based tracing and manipulation robots.
 
-## 확장으로 사용
+**BrailleBot** is a robot developed to provide coding and robotics education for students with visual impairments. By integrating tactile feedback and line-tracing functions, it enables inclusive learning experiences.
 
-이 저장소는 MakeCode에서 **확장**으로 추가될 수 있습니다.
+This extension provides blocks for movement, color detection, PID line tracking, gripper control, melody playback, and more.
 
-* [https://makecode.microbit.org/](https://makecode.microbit.org/) 열기
-* **새로운 프로젝트**에서 클릭
-* 톱니바퀴 모양 메뉴에서 **확장**을 클릭합니다
-* **https://github.com/roborisen/braillebot**으로 검색하고 가져오기
+## 🧩 Blocks Overview
 
-## 이 프로젝트 편집
+### 🚗 Movement Blocks
 
-MakeCode에서 이 저장소를 편집합니다.
+* **Move forward `$distance` cm with speed: `$speed` %**
+  Move the robot forward by a given distance and speed.
 
-* [https://makecode.microbit.org/](https://makecode.microbit.org/) 열기
-* **가져오기**를 클릭한 다음 **가져오기 URL**를 클릭합니다
-* **https://github.com/roborisen/braillebot**를 붙여넣고 가져오기를 클릭하세요.
+* **Rotate `$degree` degree with speed: `$speed` %**
+  Rotates the robot by a specified angle and speed.
 
-#### 메타데이터(검색, 렌더링에 사용)
+* **Set motor speed Left: `$left` % and Right: `$right` %**
+  Directly control each motor's speed.
 
-* for PXT/microbit
-<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
+* **Stop**
+  Immediately stops both motors.
+
+* **Turn Left / Turn Right / U turn**
+  Predefined turning blocks with alignment to the next line.
+
+### 🎨 Color Blocks
+
+* **Read Color Sensor**
+  Reads color values from the VEML6040 sensor.
+
+* **Colorkey**
+  Returns the currently detected color key (mapped internally).
+
+* **Show Color with `$colorNumber`**
+  Displays an LED color corresponding to the detected color.
+
+### 📈 Line Tracking Blocks
+
+* **Line tracking to next color**
+  Follows the line until the robot detects the next color.
+
+* **Line tracking while skipping adjacent colors**
+  Ignores nearby colors briefly and then begins tracking to the next color.
+
+### 🦾 Gripper Control Blocks
+
+* **Gripper Close `$mode`**
+  Closes the servo-based gripper. Mode can be simple or full (move + close).
+
+* **Gripper Open `$mode`**
+  Opens the gripper. Mode can be simple or full (move + open).
+
+### 🎵 Melody and Icon Blocks
+
+* **Play tones 1st: `$note1`, 2nd: `$note2`, Mode: `$mode`**
+  Plays two tones depending on robot action or stop status.
+
+* **Set Echo ON**
+  Enables melody mode.
+
+* **showIcon `$icon`**
+  Displays predefined motion-related icons (e.g., forward, stop, U-turn, etc.)
+
+### ⚙️ Setup Block
+
+* **Setup braille bot**
+  Initializes pins, sensor, white balance, and robot connection.
+
+## 🧪 Color Codes
+
+Internally, the robot uses the following codes for color identification:
+
+* `1`: RED
+* `2`: GREEN
+* `3`: BLUE
+* `4`: CYAN
+* `5`: MAGENTA
+* `6`: YELLOW
+* `7`: ORANGE
+* `8`: PINK
+* `9`: BLACK
+* `10`: WHITE
+
+## 🛠️ Dependencies
+
+* micro\:bit v2
+* G-Cube communication over UART
+* VEML6040 I2C Color Sensor
+
+## 📦 Installation
+
+To add this extension in MakeCode:
+
+1. Go to the **Advanced** section in the MakeCode editor
+2. Click **Extensions**
+3. Search for `braillebot` or paste the GitHub repository URL
+
+## 🧑‍💻 License
+
+MIT License
+
+---
+
+Created by Robo Risen
+For support or inquiries, contact: qna@roborisen.com
