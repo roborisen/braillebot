@@ -962,7 +962,7 @@ namespace braillebot {
      * @param note2 2nd tone
      * @param mode Melody for Action status or Stop status
      */
-    //% block="Play tones 1st: %note1| 2nd: %note2  Mode: %mode"
+    //% block="Play two tones 1st: %note1| 2nd: %note2  Mode: %mode"
     export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
 
         if (!melodyMode) return
@@ -1124,7 +1124,7 @@ namespace braillebot {
     /**
      * Line tracking to the next color detection
      */
-    //% block="Line tracking to next color"
+    //% block="Line tracking to the next color"
     export function lineTrackingToNextColor(): void {
 
         colorCount = 0;
@@ -1210,7 +1210,7 @@ namespace braillebot {
      * Turn on LED based on detected color
      * @param mode Simple (Opening only) or Full (Moving + Opening)
      */
-    //% block="Show Color with $colorNumber"
+    //% block="Display LED color with $colorNumber"
     export function showColorKey(colorNumber: number): void {
         if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
         if (oldColor != colorNumber) melodyAction = true
@@ -1236,9 +1236,9 @@ namespace braillebot {
 
 
     /**
-     * Setup braille bot
+     * Initialize Braille bot
      */
-    //% block="Setup braille bot"
+    //% block="Initialize Braille bot"
     export function setupBrailleBot(): void {
         pins.digitalWritePin(redPin, 1) // RED Off
         pins.digitalWritePin(greenPin, 1) // GREEN Off
