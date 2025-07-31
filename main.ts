@@ -100,49 +100,67 @@ namespace braillebot {
     const GCUBE_LINE_BOARD_ID = 0x72 // 자동차형 모델 큐브 2개에 꽂혀 동작하는 트레이싱 전용 보드 ID : 0x72 ~ 2024-10-08
 
     export enum Note {
+        //% block="Do"
         Do = 262,
+        //% block="Re"
         Re = 294,
+        //% block="Mi"
         Mi = 330,
+        //% block="Fa"
         Fa = 349,
+        //% block="Sol"
         Sol = 392,
+        //% block="La"
         La = 440,
+        //% block="Si"
         Si = 494,
+        //% block="High Do"
         HighDo = 523
     }
 
     export enum Action {
+        //% block="Action"
         Action = 0,
+        //% block="Stop"
         Stop = 1
     }
 
     export enum Icons {
+        //% block="Move forward"
         MoveForward = 0,
+        //% block="Turn left"
         TurnLeft = 1,
+        //% block="Turn right"
         TurnRight = 2,
+        //% block="U turn"
         UTurn = 3,
+        //% block="Stop"
         Stop = 4,
+        //% block="Gripper open"
         GripperOpen = 5,
+        //% block="Gripper close"
         GripperClose = 6
     }
 
     export enum Opening {
+        //% block="Just open"
         JustOpen = 0,
+        //% block="Moving open"
         MovingOpen = 1
     }
 
     export enum Closing {
+        //% block="Just close"
         JustClose = 0,
+        //% block="Moving close"
         MovingClose = 1
     }
 
     export enum Checking {
+        //% block="Without skip"
         None = 0,
+        //% block="Skip the near color"
         Skip = 1
-    }
-
-    export enum Lines {
-        Left = 0,
-        Right = 1
     }
 
 
