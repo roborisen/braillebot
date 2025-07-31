@@ -839,37 +839,43 @@ namespace braillebot {
 
 
 
-
-
-
-
-
-
-
-    //% block="Rotate $degree degree , with speed : $speed %"
-    // @param angle the angle of rotation
-    // @param speed robot speed
+    /**
+     * Rotate the robot with a speed
+     * @param angle the angle of rotation
+     * @param speed robot speed
+     */
+    //% block="Rotate $degree degree with speed : $speed %"
     export function rotateBraillebot(speed: number, degree: number): void {
         rotateRobot(speed, degree)
     }
 
-    //% block="Move forward $distance cm , with speed : $speed %"
-    // @param distance robot distance
-    // @param speed robot speed
+
+    /**
+     * Move the robot with a speed
+     * @param distance robot distance
+     * @param speed robot speed
+     */
+    //% block="Move forward $distance cm with speed : $speed %"
     export function moveBraillebot(speed: number, distance: number): void {
         moveRobot(speed, distance)
     }
 
-    //% block="Set motor speed Left: $left % and Right: $right"
-    // @param left speed of left wheel of the robot
-    // @param right speed of right wheel of the robot
+    /**
+     * Set the speed of each wheel of the robot
+     * @param left speed of left wheel of the robot
+     * @param right speed of right wheel of the robot
+     */
+    //% block="Set motor speed Left: $left % and Right: $right %"
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
     }
 
 
+    /**
+     * Show the icon with the corresponding motion of the robot
+     * @param icon Display the icon for the corresponding robot motion
+     */
     //% block="showIcon %icon"
-    // @param icon Display the icon for the corresponding robot motion 
     export function showIcon(icon: Icons): void {
         /*
             MoveForward = 0,
@@ -951,15 +957,12 @@ namespace braillebot {
 
 
     /**
-     * 두 개의 음을 1박자씩 연주하기
-     * @param note1 첫번째 음
-     * @param note2 두번째 음
-     * @param mode 동작할 때와 멈출 때의 멜로디
+     * Play two notes for one beat each
+     * @param note1 1st tone
+     * @param note2 2nd tone
+     * @param mode Melody for Action status or Stop status
      */
-    //% block="PlayTone 1st: %note1| 2nd: %note2  Mode: %mode"
-    // @param note1 1st tone
-    // @param note2 2nd tone
-    // @param Melody for Action status or Stop status
+    //% block="Play tones 1st: %note1| 2nd: %note2  Mode: %mode"
     export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
 
         if (!melodyMode) return
@@ -983,14 +986,20 @@ namespace braillebot {
 
 
 
+    /**
+     * Set melody mode on
+     */
     //% block="Set Echo ON"
     export function setEchoOn(): void {
         melodyMode = true
     }
 
 
+    /**
+     * Close gripper
+     * @param mode Simple (Closing only) or Full (Moving + Closing)
+     */
     //% block="Gripper Close $mode"
-    // @param mode Simple (Closing only) or Full (Moving + Closing)
     export function gripperCloseBlock(mode: Closing): void {
         if (mode) {
             let detection_flag = false
@@ -1028,8 +1037,11 @@ namespace braillebot {
     }
 
 
+    /**
+     * Open gripper
+     * @param mode Simple (Opening only) or Full (Moving + Opening)
+     */
     //% block="Gripper Open $mode"
-    // @param mode Simple (Opening only) or Full (Moving + Opening)
     export function gripperOpenBlock(mode: Opening): void {
         if (mode) {
             let detection_flag = false
@@ -1063,6 +1075,9 @@ namespace braillebot {
 
 
 
+    /**
+     * Skip adjace color and start line tracking to the next color detection
+     */
     //% block="Line tracking while skipping adjacent colors"
     export function lineTrackingSkipAndNextColor(): void {
 
@@ -1106,6 +1121,9 @@ namespace braillebot {
     }
 
 
+    /**
+     * Line tracking to the next color detection
+     */
     //% block="Line tracking to next color"
     export function lineTrackingToNextColor(): void {
 
@@ -1146,12 +1164,18 @@ namespace braillebot {
     }
 
 
+    /**
+     * Stop the robot
+     */
     //% block="Stop"
     export function stop(): void {
         motorSpeedControl(0, 0)
     }
 
 
+    /**
+     * Take U turn
+     */
     //% block="U turn"
     export function uTurn(): void {
         moveRobot(baseSpeed, 2)
@@ -1160,6 +1184,9 @@ namespace braillebot {
     }
 
 
+    /**
+     * Turn right
+     */
     //% block="Turn Right"
     export function turnRight(): void {
         moveRobot(baseSpeed, moveDeviation)
@@ -1168,6 +1195,9 @@ namespace braillebot {
     }
 
 
+    /**
+     * Turn left
+     */
     //% block="Turn Left"
     export function turnLeft(): void {
         moveRobot(baseSpeed, moveDeviation)
@@ -1176,6 +1206,10 @@ namespace braillebot {
     }
 
 
+    /**
+     * Turn on LED based on detected color
+     * @param mode Simple (Opening only) or Full (Moving + Opening)
+     */
     //% block="Show Color with $colorNumber"
     export function showColorKey(colorNumber: number): void {
         if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
@@ -1183,12 +1217,18 @@ namespace braillebot {
     }
 
 
+    /**
+     * Read color sensor
+     */
     //% block="Read Color Sensor"
     export function readColorSensor(): void {
         colorKey = detectColorKey();
     }
 
 
+    /**
+     * Get detected color key
+     */
     //% block="Colorkey"
     export function getColorKey(): number {
         return colorKey
