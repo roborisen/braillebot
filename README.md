@@ -97,6 +97,139 @@ To add this extension in MakeCode:
 2. Click **Extensions**
 3. Search for `braillebot` or paste the GitHub repository URL
 
+
+# BrailleBot MakeCode Extension
+
+This extension provides blocks to control the BrailleBot robot with line tracing, gripper control, color detection, and melody features using the micro:bit.
+
+## API Reference
+
+### `setupBrailleBot()`
+**Block:** Initialize Braille bot  
+Initializes all robot systems, including color sensor, servos, communication ports, and calibration.
+
+---
+
+### `moveBraillebot(speed: number, distance: number)`
+**Block:** Move forward `$distance` cm with speed: `$speed` %  
+Moves the robot forward or backward a given distance at the specified speed.
+
+---
+
+### `rotateBraillebot(speed: number, degree: number)`
+**Block:** Rotate `$degree` degree with speed: `$speed` %  
+Rotates the robot left or right by a specified degree at the given speed.
+
+---
+
+### `setMotorSpeed(left: number, right: number)`
+**Block:** Set motor speed Left: `$left` % and Right: `$right` %  
+Sets the speed of the left and right motors directly.
+
+---
+
+### `stop()`
+**Block:** Stop  
+Stops all motor movement immediately.
+
+---
+
+### `uTurn()`
+**Block:** U turn  
+Executes a U-turn maneuver using forward and rotational movements.
+
+---
+
+### `turnRight()`
+**Block:** Turn Right  
+Turns the robot right by a predefined angle.
+
+---
+
+### `turnLeft()`
+**Block:** Turn Left  
+Turns the robot left by a predefined angle.
+
+---
+
+### `lineTrackingToNextColor()`
+**Block:** Line tracking to the next color  
+Follows the line until a new color is detected using the color sensor.
+
+---
+
+### `lineTrackingSkipAndNextColor()`
+**Block:** Line tracking while skipping adjacent colors  
+Skips immediately detected color and continues line tracing until the next color.
+
+---
+
+### `readColorSensor()`
+**Block:** Read Color Sensor  
+Reads the current color using the VEML6040 sensor and stores the result.
+
+---
+
+### `getColorKey(): number`
+**Block:** Colorkey  
+Returns the currently detected color key (e.g., RED_KEY, GREEN_KEY, etc.).
+
+---
+
+### `showColorKey(colorNumber: number)`
+**Block:** Display LED color with `$colorNumber`  
+Shows an RGB LED color on the robot based on the provided color key number.
+
+---
+
+### `gripperOpenBlock(mode: Opening)`
+**Block:** Gripper Open `$mode`  
+Opens the gripper. If mode is `MovingOpen`, the robot moves forward and then opens the gripper.
+
+---
+
+### `gripperCloseBlock(mode: Closing)`
+**Block:** Gripper Close `$mode`  
+Closes the gripper. If mode is `MovingClose`, the robot moves forward before closing the gripper.
+
+---
+
+### `playTwoNotes(note1: Note, note2: Note, mode: Action)`
+**Block:** Play two tones 1st: `$note1`, 2nd: `$note2`, Mode: `$mode`  
+Plays two musical notes. In `Stop` mode, the melody plays only once when robot is idle.
+
+---
+
+### `setEchoOn()`
+**Block:** Set Echo ON  
+Enables melody playing mode for `playTwoNotes`.
+
+---
+
+### `showIcon(icon: Icons)`
+**Block:** showIcon `$icon`  
+Displays a motion icon (e.g., forward, turn, stop) on the LED matrix.
+
+---
+
+## Enums
+
+- `Note`: Musical notes (Do, Re, Mi, etc.)
+- `Action`: Playback trigger mode (`Action`, `Stop`)
+- `Icons`: Motion symbols to display on LED
+- `Opening`: Gripper open mode (`JustOpen`, `MovingOpen`)
+- `Closing`: Gripper close mode (`JustClose`, `MovingClose`)
+- `Checking`: Color skipping mode (`None`, `Skip`)
+
+---
+
+## Setup
+
+Install this extension in MakeCode via:
+
+
+
+
 ## 🧑‍💻 License
 
 MIT License
