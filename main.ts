@@ -100,22 +100,22 @@ namespace braillebot {
     const GCUBE_LINE_BOARD_ID = 0x72 // 자동차형 모델 큐브 2개에 꽂혀 동작하는 트레이싱 전용 보드 ID : 0x72 ~ 2024-10-08
 
     export enum Note {
-        //% block="Do"
-        Do = 262,
-        //% block="Re"
-        Re = 294,
-        //% block="Mi"
-        Mi = 330,
-        //% block="Fa"
-        Fa = 349,
-        //% block="Sol"
-        Sol = 392,
-        //% block="La"
-        La = 440,
-        //% block="Si"
-        Si = 494,
-        //% block="High Do"
-        HighDo = 523
+        //% block="C4"
+        C4 = 262,
+        //% block="D4"
+        D4 = 294,
+        //% block="E4"
+        E4 = 330,
+        //% block="F4"
+        F4 = 349,
+        //% block="G4"
+        G4 = 392,
+        //% block="A4"
+        A4 = 440,
+        //% block="B4"
+        B4 = 494,
+        //% block="C5"
+        C5 = 523
     }
 
     export enum Action {
