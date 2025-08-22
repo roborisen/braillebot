@@ -214,7 +214,7 @@ Displays a motion icon (e.g., forward, turn, stop) on the LED matrix.
 
 ## Enums
 
-- `Note`: Musical notes (Do, Re, Mi, etc.)
+- `Note`: Musical notes (C4, D4, E4, etc.)
 - `Action`: Playback trigger mode (`Action`, `Stop`)
 - `Icons`: Motion symbols to display on LED
 - `Opening`: Gripper open mode (`JustOpen`, `MovingOpen`)
