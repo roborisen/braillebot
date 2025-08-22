@@ -1243,7 +1243,7 @@ namespace braillebot {
     /**
      * When a color is detected
      */
-    //% block="If the %color is detected"
+    //% block="If %color color is detected"
     export function isColorDetected(color: inKey): boolean {
         if (colorKey == color) return true
         else return false
