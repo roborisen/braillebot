@@ -142,6 +142,30 @@ namespace braillebot {
         GripperClose = 6
     }
 
+    // Definition of Colorkey
+    export enum inKey {
+        //% block="RED"
+        RED_KEY = 1,
+        //% block="GREEN"
+        GREEN_KEY = 2,
+        //% block="BLUE"
+        BLUE_KEY = 3,
+        //% block="CYAN"
+        CYAN_KEY = 4,
+        //% block="MAGENTA"
+        MAGENTA_KEY = 5,
+        //% block="YELLOW"
+        YELLOW_KEY = 6,
+        //% block="ORANGE"
+        ORANGE_KEY = 7,
+        //% block="PINK"
+        PINK_KEY = 8,
+        //% block="BLACK"
+        BLACK_KEY = 9,
+        //% block="WHITE"
+        WHITE_KEY = 10
+    }
+
     export enum Opening {
         //% block="Just open"
         JustOpen = 0,
@@ -1214,6 +1238,15 @@ namespace braillebot {
     export function showColorKey(colorNumber: number): void {
         if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
         if (oldColor != colorNumber) melodyAction = true
+    }
+
+    /**
+     * When a color is detected
+     */
+    //% block="If the %color is detected"
+    export function isColorDetected(color: inKey): boolean {
+        if (colorKey == color) return true
+        else return false
     }
 
 
