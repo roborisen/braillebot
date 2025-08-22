@@ -2,36 +2,36 @@ braillebot.setupBrailleBot()
 basic.forever(function () {
     braillebot.readColorSensor()
     braillebot.showColorKey(braillebot.getColorKey())
-    if (braillebot.getColorKey() == 1) {
+    if (braillebot.isColorDetected(braillebot.inKey.RED_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.showIcon(braillebot.Icons.TurnRight)
         braillebot.turnRight()
         braillebot.lineTrackingToNextColor()
-    } else if (braillebot.getColorKey() == 3) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.BLUE_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.showIcon(braillebot.Icons.TurnLeft)
         braillebot.turnLeft()
         braillebot.lineTrackingToNextColor()
-    } else if (braillebot.getColorKey() == 6) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.YELLOW_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.showIcon(braillebot.Icons.UTurn)
         braillebot.uTurn()
         braillebot.lineTrackingToNextColor()
-    } else if (braillebot.getColorKey() == 7) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.ORANGE_KEY)) {
         braillebot.showIcon(braillebot.Icons.MoveForward)
         braillebot.lineTrackingSkipAndNextColor()
-    } else if (braillebot.getColorKey() == 4) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.CYAN_KEY)) {
         braillebot.setEchoOn()
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.showIcon(braillebot.Icons.MoveForward)
         braillebot.lineTrackingSkipAndNextColor()
-    } else if (braillebot.getColorKey() == 8) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.PINK_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.gripperOpenBlock(braillebot.Opening.MovingOpen)
-    } else if (braillebot.getColorKey() == 5) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.MAGENTA_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.gripperCloseBlock(braillebot.Closing.MovingClose)
-    } else if (braillebot.getColorKey() == 2) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.GREEN_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Stop)
     } else {
 
