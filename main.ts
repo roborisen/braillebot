@@ -467,8 +467,9 @@ namespace braillebot {
 
         if (
             (normred < 0.3 && normgreen < 0.3 && normblue < 0.3 &&
-                (Math.abs(normred - normblue) + Math.abs(normgreen - normblue) + Math.abs(normred - normgreen)) < 0.12 &&
-                gr < rg) ||
+//                (Math.abs(normred - normblue) + Math.abs(normgreen - normblue) + Math.abs(normred - normgreen)) < 0.12 &&
+//                gr < rg) ||
+            (Math.abs(normred - normblue) + Math.abs(normgreen - normblue) + Math.abs(normred - normgreen)) < 0.12) ||
             (red + green + blue) < 1000
         ) {
             returnKey = BLACK_KEY
