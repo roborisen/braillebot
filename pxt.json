@@ -1,6 +1,6 @@
 {
     "name": "braillebot",
-    "version": "1.0.26",
+    "version": "1.0.27",
     "description": "With micro:bit and Braillebot, you can conduct various robot education and IoT project classes.",
     "license": "MIT",
     "dependencies": {
