@@ -521,7 +521,7 @@ namespace braillebot {
             basic.pause(130)
             colorKey = detectColorKey()
 
-            if ((red + green + blue) < 4000) {
+            if ((red + green + blue) < 3500) {
                 whitecheck = false
             }
 
