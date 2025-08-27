@@ -360,7 +360,7 @@ namespace braillebot {
                 lineExist = 0
             }
 
-            if (lineExist > 10) {
+            if (lineExist > 15) {
                 tracking = false
                 basic.pause(20)
                 motorSpeedControl(0, 0)
@@ -518,7 +518,7 @@ namespace braillebot {
         }
 
         for (let i = 0; i < 5; i++) {
-            basic.pause(130)
+            basic.pause(96)
             colorKey = detectColorKey()
 
             if ((red + green + blue) < 4000) {
