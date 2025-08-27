@@ -348,7 +348,8 @@ namespace braillebot {
                 normred < 0.3 && normgreen < 0.3 && normblue < 0.3 &&
                 (Math.abs(normred - normblue) + Math.abs(normgreen - normblue) + Math.abs(normred - normgreen)) < 0.1 &&
                 gr < rg
-                || red + green + blue < 1000
+//                || red + green + blue < 1000
+                || red + green + blue < 2000  //2025-08-27
             ) {
                 tempColor = 1
             }
