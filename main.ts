@@ -339,7 +339,6 @@ namespace braillebot {
         if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.0) {// 0.9->1.0 2025-07-29
 //        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.2) {// 0.9->1.0 2025-08-28
             returnKey = true
-            showColor(RED_KEY)
         }
 
         // 특정 조건 하에서 라인트래킹 종료
