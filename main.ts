@@ -336,8 +336,8 @@ namespace braillebot {
         bg = normblue / normgreen
 
         // 색상이 존재하는지 확인
-//        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.0) {// 0.9->1.0 2025-07-29
-        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.2) {// 0.9->1.0 2025-08-28
+        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.0) {// 0.9->1.0 2025-07-29
+//        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.2) {// 0.9->1.0 2025-08-28
             returnKey = true
             showColor(RED_KEY)
         }
