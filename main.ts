@@ -25,8 +25,8 @@ namespace braillebot {
     let melodyMode = false
     let melodyAction = true
 
-    let baseSpeed = 70
-    let speedDeviation = 20
+    let baseSpeed = 60
+    let speedDeviation = 30
     let moveDeviation = 4
     let blindColor = 0
 
@@ -1137,7 +1137,7 @@ namespace braillebot {
                 }
             }
 
-            if (mode == 1 && colorCount > 42) mode = 0  // change mode after moving a distance
+            if (mode == 1 && colorCount > 50) mode = 0  // change mode after moving a distance
             if (colorCount > 625) break  // Searching next color time limit 10 msec
         }
         motorSpeedControl(0, 0)
