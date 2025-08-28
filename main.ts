@@ -417,8 +417,7 @@ namespace braillebot {
         return { h: hDeg, s: s, v: v }
     }
 
-    //% block="detect color key"
-    export function detectColorKey():number {
+    function detectColorKey():number {
 
         red = readRed()
         green = readGreen()
