@@ -961,7 +961,7 @@ namespace braillebot {
             music.playTone(note1, music.beat(BeatFraction.Quarter))
             basic.pause(50)
             music.playTone(note2, music.beat(BeatFraction.Quarter))
-            basic.pause(1000)
+            basic.pause(500)
         } else {
             if (melodyAction) { // one time play when the robot is staying in stop position
                 melodyAction = false
@@ -969,7 +969,7 @@ namespace braillebot {
                 music.playTone(note1, music.beat(BeatFraction.Quarter))
                 basic.pause(50)
                 music.playTone(note2, music.beat(BeatFraction.Quarter))
-                basic.pause(1000)
+                basic.pause(500)
             }
         }
     }
