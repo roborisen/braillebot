@@ -233,25 +233,6 @@ namespace braillebot {
         return readColorRegister(0x0A)
     }
 
-    // ... (이전 코드 유지)
-
-    function colorName(color: number): string {
-        switch (color) {
-            case RED_KEY: return "RED"
-            case GREEN_KEY: return "GREEN"
-            case BLUE_KEY: return "BLUE"
-            case CYAN_KEY: return "CYAN"
-            case MAGENTA_KEY: return "MAGENTA"
-            case YELLOW_KEY: return "YELLOW"
-            case ORANGE_KEY: return "ORANGE"
-            case PINK_KEY: return "PINK"
-            case BLACK_KEY: return "BLACK"
-            case WHITE_KEY: return "WHITE"
-            default: return ""
-        }
-    }
-
-
     function showColor(color: number) {
         led.enable(false)
         switch (color) {
@@ -336,7 +317,7 @@ namespace braillebot {
         bg = normblue / normgreen
 
         // 색상이 존재하는지 확인
-        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.0) {// 0.9->1.0 2025-07-29
+        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 0.9) {// 0.9->1.0 2025-08-28
 //        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.2) {// 0.9->1.0 2025-08-28
             returnKey = true
         }
@@ -452,7 +433,7 @@ namespace braillebot {
     }
 
 
-    function doBalance(mode: number) {
+    function doBalance() {
         let rv = 0
         let gv = 0
         let bv = 0
@@ -460,30 +441,8 @@ namespace braillebot {
         let rs = 0
         let whitecheck = true
 
-        if (mode == 1) {
-            colorKey = detectColorKey()
-            if (colorKey != YELLOW_KEY) return
-            else {
-                // 노란색 LED 점멸 5초
-                pins.digitalWritePin(redPin, 1)
-                pins.digitalWritePin(greenPin, 1)
-                pins.digitalWritePin(bluePin, 1)
-                for (let a = 0; a < 10; a++) {
-                    if (a % 2 == 0) {
-                        pins.digitalWritePin(redPin, 0)
-                        pins.digitalWritePin(greenPin, 0)
-                    } else {
-                        pins.digitalWritePin(redPin, 1)
-                        pins.digitalWritePin(greenPin, 1)
-                    }
-                    basic.pause(500)
-                }
-                showColor(BLUE_KEY)
-            }
-        }
-
         for (let i = 0; i < 5; i++) {
-            basic.pause(96)
+            basic.pause(130)
             colorKey = detectColorKey()
 
             if ((red + green + blue) < 4000) {
@@ -528,64 +487,39 @@ namespace braillebot {
 
 
     function checkWhiteBalance(mode: number) {
-        if (mode == 0) {
-            // 초기 셋업 시 저장된 값 불러오기
-            //let rv = settings.readNumber("redBalance")
-            //let gv = settings.readNumber("greenBalance")
-            //let bv = settings.readNumber("blueBalance")
-            //let ls = settings.readNumber("leftBalance")
-            //let rs = settings.readNumber("rightBalance")
+        // 초기 셋업 시 저장된 값 불러오기
+        //let rv = settings.readNumber("redBalance")
+        //let gv = settings.readNumber("greenBalance")
+        //let bv = settings.readNumber("blueBalance")
+        //let ls = settings.readNumber("leftBalance")
+        //let rs = settings.readNumber("rightBalance")
 
-            let rv = 0;
-            let gv = 0;
-            let bv = 0;
-            let ls = 0;
-            let rs = 0;
+        let rv = 0;
+        let gv = 0;
+        let bv = 0;
+        let ls = 0;
+        let rs = 0;
 
-            if (rv == 0 || gv == 0 || bv == 0) {
-                // white balance 수동 요청
-                pins.digitalWritePin(redPin, 1) // RED on
-                pins.digitalWritePin(greenPin, 1) // GREEN on
-                pins.digitalWritePin(bluePin, 1) // BLUE on
-                for (let a = 0; a < 4; a++) {
-                    if (a % 2 == 0) pins.digitalWritePin(redPin, 0) // RED on
-                    else pins.digitalWritePin(redPin, 1) // RED off
-                    basic.pause(500)
-                }
-                showColor(BLUE_KEY) // BLUE_KEY 대체
-                doBalance(0)
-            } else {
-                redBalance = rv
-                greenBalance = gv
-                blueBalance = bv
-                leftBalance = ls
-                rightBalance = rs
+        if (rv == 0 || gv == 0 || bv == 0) {
+            // white balance 수동 요청
+            pins.digitalWritePin(redPin, 1) // RED on
+            pins.digitalWritePin(greenPin, 1) // GREEN on
+            pins.digitalWritePin(bluePin, 1) // BLUE on
+            for (let a = 0; a < 4; a++) {
+                if (a % 2 == 0) pins.digitalWritePin(redPin, 0) // RED on
+                else pins.digitalWritePin(redPin, 1) // RED off
+                basic.pause(500)
             }
+            showColor(BLUE_KEY) // BLUE_KEY 대체
+            doBalance()
         } else {
-            // loop 중 자동 재보정 조건
-            if (balanceCount > 102 && tracking == false) {
-                let leftValue = pins.analogReadPin(AnalogPin.P1)
-                let rightValue = pins.analogReadPin(AnalogPin.P2)
-                leftValue = Math.map(leftValue, leftBalance, 1023, 0, 1023)
-                rightValue = Math.map(rightValue, rightBalance, 1023, 0, 1023)
-                if (leftValue < 0) leftValue = 0
-                if (rightValue < 0) rightValue = 0
-
-                if ((leftValue > 300 && leftValue < 900) && (rightValue > 300 && rightValue < 900)) {
-                    pins.digitalWritePin(redPin, 1) // RED on
-                    pins.digitalWritePin(greenPin, 1) // GREEN
-                    pins.digitalWritePin(bluePin, 1) // BLUE
-                    for (let a = 0; a < 10; a++) {
-                        if (a % 2 == 0) pins.digitalWritePin(redPin, 0) // RED
-                        else pins.digitalWritePin(redPin, 1)
-                        basic.pause(500)
-                    }
-                    showColor(BLUE_KEY)
-                    doBalance(1)
-                }
-                balanceCount = 0
-            }
+            redBalance = rv
+            greenBalance = gv
+            blueBalance = bv
+            leftBalance = ls
+            rightBalance = rs
         }
+
     }
 
 
@@ -607,7 +541,7 @@ namespace braillebot {
             serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
         }
 
-        basic.pause(10)
+        basic.pause(5) //2025-08-29
         serial.writeBuffer(buffer)
         basic.pause(30)
     }
@@ -616,15 +550,15 @@ namespace braillebot {
         return Math.floor(cmd / 16) + (cmd & 0x0F) * 16
     }
 
-    function directCubeSpeedControl(motor_speed: number, colorkey: number, distance: number, isRightCube: boolean) {
-        if (motor_speed < -100) motor_speed = -100
-        else if (motor_speed > 100) motor_speed = 100
+    function directCubeSpeedControl(motorSpeed: number, colorkey: number, distance: number, isRightCube: boolean) {
+        if (motorSpeed < -100) motorSpeed = -100
+        else if (motorSpeed > 100) motorSpeed = 100
 
         let buffer = pins.createBuffer(10)
         buffer.setUint8(0, GCUBE_REQ_LINEBOARD_SPEED)
         buffer.setUint8(1, getInvert(GCUBE_REQ_LINEBOARD_SPEED))
         buffer.setUint8(2, 0)
-        buffer.setUint8(3, motor_speed)  // signed
+        buffer.setUint8(3, motorSpeed)  // signed
         buffer.setUint8(4, colorkey)
         buffer.setUint8(5, distance)
         buffer.setUint8(6, 0)
@@ -642,27 +576,27 @@ namespace braillebot {
     }
 
 
-    function directCubeMoveControl(motor_speed: number, robot_distance: number, serialPort: String) {
-        if (robot_distance < 0) {
-            motor_speed = motor_speed * -1
+    function directCubeMoveControl(motorSpeed: number, robotDistance: number, serialPort: String) {
+        if (robotDistance < 0) {
+            motorSpeed = motorSpeed * -1
         }
-        robot_distance = Math.abs(robot_distance)
-        if (robot_distance > 200) {
-            robot_distance = 200
+        robotDistance = Math.abs(robotDistance)
+        if (robotDistance > 200) {
+            robotDistance = 200
         }
-        directSendGcube([GCUBE_REQ_LINEBOARD_MOVE, getInvert(GCUBE_REQ_LINEBOARD_MOVE), 0, motor_speed, robot_distance, 0, 0, 0, 0, 0], serialPort)
+        directSendGcube([GCUBE_REQ_LINEBOARD_MOVE, getInvert(GCUBE_REQ_LINEBOARD_MOVE), 0, motorSpeed, robotDistance, 0, 0, 0, 0, 0], serialPort)
     }
 
-    function directCubeRotateControl(motor_speed: number, robot_angle: number, serialPort: String) {
-        if (robot_angle < 0) {
-            motor_speed = motor_speed * -1
+    function directCubeRotateControl(motorSpeed: number, robotAngle: number, serialPort: String) {
+        if (robotAngle < 0) {
+            motorSpeed = motorSpeed * -1
         }
-        robot_angle = Math.abs(robot_angle)
-        if (robot_angle > 180) {
-            robot_angle = 180
+        robotAngle = Math.abs(robotAngle)
+        if (robotAngle > 180) {
+            robotAngle = 180
         }
 
-        directSendGcube([GCUBE_REQ_LINEBOARD_ROTATE, getInvert(GCUBE_REQ_LINEBOARD_ROTATE), 0, motor_speed, robot_angle, 0, 0, 0, 0, 0], serialPort)
+        directSendGcube([GCUBE_REQ_LINEBOARD_ROTATE, getInvert(GCUBE_REQ_LINEBOARD_ROTATE), 0, motorSpeed, robotAngle, 0, 0, 0, 0, 0], serialPort)
     }
 
     function directCubeMelodyControl(melody_number: number, m1: number, m2: number, m3: number, serialPort: String) {
@@ -1169,7 +1103,7 @@ namespace braillebot {
     //% block="U turn"
     export function uTurn(): void {
         moveRobot(baseSpeed, 2)
-        rotateRobot(-50, 90)
+        rotateRobot(-50, 120)
         let detection_flag = rotateUntilDetectLine(0)
     }
 
