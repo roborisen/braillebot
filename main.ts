@@ -417,113 +417,38 @@ namespace braillebot {
         return { h: hDeg, s: s, v: v }
     }
 
-    function detectColorKey(): number {
-        let returnKey = 0
+    function detectColorKey():number {
 
-        // VEML6040에서 RGB 읽기
         red = readRed()
         green = readGreen()
         blue = readBlue()
 
-        normred = red / redBalance
-        normgreen = green / greenBalance
-        normblue = blue / blueBalance
+        const hsv = rgbToHsv(red, green, blue)
+        const h = hsv.h
+        const s = hsv.s
+        const v = hsv.v
 
-        rg = normred / normgreen
-        rb = normred / normblue
-        gr = normgreen / normred
-        gb = normgreen / normblue
-        br = normblue / normred
-        bg = normblue / normgreen
-
-        if (rg > 1.2) {
-            let At = rg + gr
-            let Bt = rb + gb
-            let Ct = rg + bg
-            let Et = br + bg
-            let It = rg + rb + bg
-
-            if (At + 0.1 < Bt) {
-                if (At + 0.15 < Ct) {
-                    if (rg >= 1.45) {
-                        returnKey = RED_KEY
-                    } else {
-                        if (gb > 1.1) {
-                            returnKey = ORANGE_KEY
-                        } else {
-                            returnKey = RED_KEY
-                        }
-                    }
-                } else if (rb > 1.5) {
-                    if (It > 4.8) {
-                        returnKey = RED_KEY
-                    } else {
-                        returnKey = ORANGE_KEY
-                    }
-                }
-            } else {
-                if (At < Et) {
-                    if (normred > 0.5) {
-                        returnKey = PINK_KEY
-                    } else {
-                        returnKey = MAGENTA_KEY
-                    }
-                } else {
-                    returnKey = PINK_KEY
-                }
-            }
-
-            if (br > 2.0 || bg > 2.0) {
-                returnKey = BLUE_KEY
-            }
-        } else if (gb > 1.2) {
-            let Ct = rg + bg
-            let Dt = gr + br
-            let Ft = rg + rb
-            let Gt = gr + gb
-            let Ht = Math.abs(Ft - Gt) + Math.abs(Ct - Dt)
-
-            if (Ht < 0.25) {
-                if (gb > 1.4) returnKey = YELLOW_KEY
-            } else {
-                if (Ft < Gt) {
-                    returnKey = GREEN_KEY
-                } else {
-                    if (Gt < Ct) {
-                        if (rg > 1.35) returnKey = RED_KEY
-                    } else if (gb > 1.5) {
-                        if (Ht > 0.8) returnKey = ORANGE_KEY
-                        else returnKey = YELLOW_KEY
-                    }
-                }
-            }
-        } else {
-            if (normblue > 0.5 && normred > 0.4 && normgreen > 0.4 && br > 1.2) {
-                returnKey = CYAN_KEY
-            } else if (br > 1.2 && bg > 1.2 && normred < 0.4) {
-                returnKey = BLUE_KEY
-            }
+        // 검정/흰색 우선 판별
+        if (s > 0.05 && s < 0.20 && v < 0.35) {
+            return BLACK_KEY
+        }
+        if (s < 0.1 && v > 0.9) {
+            return WHITE_KEY
         }
 
-        if (
-            (normred < 0.3 && normgreen < 0.3 && normblue < 0.3 &&
-                //                (Math.abs(normred - normblue) + Math.abs(normgreen - normblue) + Math.abs(normred - normgreen)) < 0.12 &&
-                //                gr < rg) ||
-                (Math.abs(normred - normblue) + Math.abs(normgreen - normblue) + Math.abs(normred - normgreen)) < 0.12) ||
-            (red + green + blue) < 1000
-        ) {
-            returnKey = BLACK_KEY
+        // 유색 판별
+        if (s > 0.2) {
+            if (h >= 350 || h < 15) return RED_KEY      // 빨강
+            if (h >= 19 && h < 35) return ORANGE_KEY   // 주황
+            if (h >= 50 && h < 65) return YELLOW_KEY   // 노랑
+            if (h >= 65 && h < 150) return GREEN_KEY    // 초록
+            if (h >= 180 && h < 233 && Math.abs(s-v) > 0.2) return CYAN_KEY    // 청록
+            if (h >= 230 && h < 260) return BLUE_KEY    // 파랑
+            if (h >= 260 && h < 325) return MAGENTA_KEY // 마젠타
+            if (h >= 325 && h < 350) return PINK_KEY    // 핑크
         }
 
-        if (normred > 0.8 && normgreen > 0.8 && normblue > 0.8) {
-            returnKey = WHITE_KEY
-        }
-
-        if (red + green + blue < 700) {
-            returnKey = 0
-        }
-
-        return returnKey
+        return 0
     }
 
 
