@@ -1142,7 +1142,7 @@ namespace braillebot {
             if (colorCount % 6 == 0) { // every 16*6 = 96 msec check the Color sensor
                 let existColor = meetColor()
                 if (existColor) {
-                    basic.pause(40) //wait for reading position
+                    basic.pause(80) //wait for reading position
                     break
                 }
             }
