@@ -1190,7 +1190,7 @@ namespace braillebot {
         if(checkWhiteBalance()){
             music.play(music.tonePlayable(262, music.beat(BeatFraction.Quarter)), music.PlaybackMode.UntilDone)
         }else{
-            music.play(music.tonePlayable(523, music.beat(BeatFraction.Half)), music.PlaybackMode.UntilDone)
+            music.play(music.tonePlayable(523, music.beat(BeatFraction.Whole)), music.PlaybackMode.UntilDone)
         }
 
         pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
