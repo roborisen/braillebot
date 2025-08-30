@@ -710,11 +710,12 @@ namespace braillebot {
             if (colorKey == BLACK_KEY) {
                 motorSpeedControl(0, 0)
                 break
-            } else if (colorKey == GREEN_KEY) {
-                motorSpeedControl(0, 0)
-                showColor(GREEN_KEY)
-                break
-            }
+            } 
+            //else if (colorKey == GREEN_KEY) {
+            //    motorSpeedControl(0, 0)
+            //    showColor(GREEN_KEY)
+            //    break
+            //}
 
             // IR 센서 라인 감지
             let lineValue = 0
@@ -1142,7 +1143,7 @@ namespace braillebot {
     export function readColorSensor(): void {
         colorKey = detectColorKey();
         if( colorKey > 0 && colorKey <9){ //2025-08-30
-            basic.pause(300)
+            basic.pause(200)
             colorKey = detectColorKey(); //Check color again
         }
     }
