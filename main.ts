@@ -188,7 +188,7 @@ namespace braillebot {
     }
 
 
-    function veml6040_begin(): boolean {
+    function veml6040Begin(): boolean {
         let sensorExists = false
         try {
             pins.i2cWriteNumber(VEML6040_ADDR, 0x00, NumberFormat.UInt8BE)
@@ -200,7 +200,7 @@ namespace braillebot {
     }
 
 
-    function veml6040_init() {
+    function veml6040Init() {
 
         let buf = pins.createBuffer(3)
         buf[0] = 0x00 //CMD register
@@ -599,8 +599,8 @@ namespace braillebot {
         directSendGcube([GCUBE_REQ_LINEBOARD_ROTATE, getInvert(GCUBE_REQ_LINEBOARD_ROTATE), 0, motorSpeed, robotAngle, 0, 0, 0, 0, 0], serialPort)
     }
 
-    function directCubeMelodyControl(melody_number: number, m1: number, m2: number, m3: number, serialPort: String) {
-        directSendGcube([GCUBE_REQ_LINEBOARD_MELODY, getInvert(GCUBE_REQ_LINEBOARD_MELODY), melody_number, m1, m2, m3, 0, 0, 0, 0], serialPort)
+    function directCubeMelodyControl(melodyNumber: number, m1: number, m2: number, m3: number, serialPort: String) {
+        directSendGcube([GCUBE_REQ_LINEBOARD_MELODY, getInvert(GCUBE_REQ_LINEBOARD_MELODY), melodyNumber, m1, m2, m3, 0, 0, 0, 0], serialPort)
     }
 
 
@@ -639,13 +639,13 @@ namespace braillebot {
 
     function waitForLineboardCubeConnected(mode: number) {
         let rcvData: number[] = [0, 0, 0]
-        let cube1_connected = false
-        let cube2_connected = false
+        let cube1Connected = false
+        let cube2Connected = false
         let timeout = 0
 
-        while (!(cube1_connected && cube2_connected)) {
+        while (!(cube1Connected && cube2Connected)) {
             // 큐브1 (P14: RX, P15: TX)
-            if (!cube1_connected) {
+            if (!cube1Connected) {
                 pins.setPull(DigitalPin.P14, PinPullMode.PullUp)
                 let pinState1 = pins.digitalReadPin(DigitalPin.P14)
                 if (pinState1 == 1) {
@@ -659,7 +659,7 @@ namespace braillebot {
                         }
                         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
                             directSendGcube([GCUBE_GET_BOARD_ID, getInvert(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "left")
-                            cube1_connected = true
+                            cube1Connected = true
                         }
                     }
                 }
@@ -668,7 +668,7 @@ namespace braillebot {
             basic.pause(50) // 너무 빠른 루프 방지
 
             // 큐브2 (P12: RX, P8: TX)
-            if (!cube2_connected) {
+            if (!cube2Connected) {
                 pins.setPull(DigitalPin.P12, PinPullMode.PullUp)
                 let pinState2 = pins.digitalReadPin(DigitalPin.P12)
                 if (pinState2 == 1) {
@@ -682,7 +682,7 @@ namespace braillebot {
                         }
                         if (rcvData[0] == GCUBE_GET_BOARD_ID && rcvData[1] == 0x00 && rcvData[2] == 0x00) {
                             directSendGcube([GCUBE_GET_BOARD_ID, getInvert(GCUBE_GET_BOARD_ID), 0, 0, 0, GCUBE_LINE_BOARD_ID, 0, 0, 0, 0], "right")
-                            cube2_connected = true
+                            cube2Connected = true
                         }
                     }
                 }
@@ -926,7 +926,7 @@ namespace braillebot {
     //% block="Gripper Close $mode"
     export function gripperCloseBlock(mode: Closing): void {
         if (mode) {
-            let detection_flag = false
+            let detectionFlag = false
             motorSpeedControl(0, 0)
             pins.servoWritePin(servoPin, 35)
             basic.pause(300)
@@ -944,9 +944,9 @@ namespace braillebot {
             basic.pause(300)
 
             rotateRobot(-50, 60)
-            detection_flag = rotateUntilDetectLine(0)
+            detectionFlag = rotateUntilDetectLine(0)
 
-            if (detection_flag) {
+            if (detectionFlag) {
                 tracking = true
             }
 
@@ -968,7 +968,7 @@ namespace braillebot {
     //% block="Gripper Open $mode"
     export function gripperOpenBlock(mode: Opening): void {
         if (mode) {
-            let detection_flag = false
+            let detectionFlag = false
             motorSpeedControl(0, 0)
             basic.pause(300)
 
@@ -985,9 +985,9 @@ namespace braillebot {
             basic.pause(300)
 
             rotateRobot(-50, 60)
-            detection_flag = rotateUntilDetectLine(0)
+            detectionFlag = rotateUntilDetectLine(0)
 
-            if (detection_flag) {
+            if (detectionFlag) {
                 tracking = true
             }
         } else {
@@ -1104,7 +1104,7 @@ namespace braillebot {
     export function uTurn(): void {
         moveRobot(baseSpeed, 2)
         rotateRobot(-50, 120)
-        let detection_flag = rotateUntilDetectLine(0)
+        let detectionFlag = rotateUntilDetectLine(0)
     }
 
 
@@ -1115,7 +1115,7 @@ namespace braillebot {
     export function turnRight(): void {
         moveRobot(baseSpeed, moveDeviation)
         rotateRobot(baseSpeed, 55)
-        let detection_flag = rotateUntilDetectLine(1)
+        let detectionFlag = rotateUntilDetectLine(1)
     }
 
 
@@ -1126,7 +1126,7 @@ namespace braillebot {
     export function turnLeft(): void {
         moveRobot(baseSpeed, moveDeviation)
         rotateRobot(-1 * baseSpeed, 55)
-        let detection_flag = rotateUntilDetectLine(0)
+        let detectionFlag = rotateUntilDetectLine(0)
     }
 
 
@@ -1185,7 +1185,7 @@ namespace braillebot {
         serial.setRxBufferSize(10)
         serial.setTxBufferSize(10)
 
-        veml6040_init()
+        veml6040Init()
 
         basic.pause(500)
 
