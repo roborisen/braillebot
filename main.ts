@@ -710,10 +710,6 @@ namespace braillebot {
             if (colorKey == BLACK_KEY) {
                 motorSpeedControl(0, 0)
                 break
-            } else if (colorKey == ORANGE_KEY || colorKey == CYAN_KEY) {
-                motorSpeedControl(0, 0)
-                showColor(colorKey)
-                break
             } else if (colorKey == GREEN_KEY) {
                 motorSpeedControl(0, 0)
                 showColor(GREEN_KEY)
@@ -742,7 +738,7 @@ namespace braillebot {
             motorSpeedControl(0, 0)
             return false
         } else {
-            showColor(0)
+//            showColor(0) //2025-08-30
             return true
         }
     }
@@ -1144,6 +1140,10 @@ namespace braillebot {
     //% block="Read Color Sensor"
     export function readColorSensor(): void {
         colorKey = detectColorKey();
+        if( colorKey > 0 && colorKey <9){ //2025-08-30
+            basic.pause(300)
+            colorKey = detectColorKey(); //Check color again
+        }
     }
 
 
