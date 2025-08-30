@@ -1058,7 +1058,7 @@ namespace braillebot {
             basic.pause(16) // 16ms line tracking
 
             // 30*16 = 480 msec after start
-            if (colorCount % 6 == 0 && colorCount > 30) { // every 16*6 = 96 msec check the Color sensor
+            if (colorCount % 6 == 0 && colorCount > 15) { // every 16*6 = 96 msec check the Color sensor
                 let existColor = meetColor()
                 if (existColor) {
                     basic.pause(30) //wait for reading position
