@@ -20,7 +20,6 @@ namespace braillebot {
 
     const BLACK_THRESHOLD = 500
 
-    let tracking = false
     let allConnected = false
     let melodyMode = false
     let melodyAction = true
@@ -319,7 +318,7 @@ namespace braillebot {
         }
 
         // 특정 조건 하에서 라인트래킹 종료
-        if (tracking && blindColor == 0) {
+        if (blindColor == 0) {
             let tempColor = 0
 
             if (
@@ -339,11 +338,9 @@ namespace braillebot {
             }
 
             if (lineExist > 15) {
-                tracking = false
-                basic.pause(20)
                 motorSpeedControl(0, 0)
                 lineExist = 0
-                showColor(0)
+                showColor(RED_KEY)
             }
         } else {
             lineExist = 0
@@ -539,7 +536,7 @@ namespace braillebot {
             serial.redirect(SerialPin.P12, SerialPin.P8, 115200)
         }
 
-        basic.pause(5) //2025-08-29
+        basic.pause(10) //2025-08-30
         serial.writeBuffer(buffer)
         basic.pause(30)
     }
@@ -944,10 +941,6 @@ namespace braillebot {
             rotateRobot(-50, 60)
             detectionFlag = rotateUntilDetectLine(0)
 
-            if (detectionFlag) {
-                tracking = true
-            }
-
         } else {
             basic.pause(300)
             for (let i = 40; i <= 90; i += 5) {
@@ -985,9 +978,6 @@ namespace braillebot {
             rotateRobot(-50, 60)
             detectionFlag = rotateUntilDetectLine(0)
 
-            if (detectionFlag) {
-                tracking = true
-            }
         } else {
             basic.pause(300)
             pins.servoWritePin(servoPin, 35)
