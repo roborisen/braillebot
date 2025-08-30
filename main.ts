@@ -1193,6 +1193,8 @@ namespace braillebot {
 
         allConnected = true
 
+        basic.pause (500)
+
     }
 
 

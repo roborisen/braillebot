@@ -28,7 +28,7 @@ basic.forever(function () {
     } else if (braillebot.isColorDetected(braillebot.inKey.PINK_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.gripperOpenBlock(braillebot.Opening.MovingOpen)
-    } else if (braillebot.isColorDetected(braillebot.inKey.MAGENTA_KEY)) {
+    } else if (braillebot.isColorDetected(braillebot.inKey.VIOLET_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C4, braillebot.Action.Action)
         braillebot.gripperCloseBlock(braillebot.Closing.MovingClose)
     } else if (braillebot.isColorDetected(braillebot.inKey.GREEN_KEY)) {
