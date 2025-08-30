@@ -429,7 +429,7 @@ namespace braillebot {
     }
 
 
-    function doBalance() {
+    function doBalance():boolean {
         let rv = 0
         let gv = 0
         let bv = 0
@@ -475,14 +475,15 @@ namespace braillebot {
             rightBalance = rs
 
             showColor(0) // LED OFF
+            return true
         } else {
-            // showColor(BLUE_KEY) 유지
+            return false
         }
     }
 
 
 
-    function checkWhiteBalance(mode: number) {
+    function checkWhiteBalance():boolean {
         // 초기 셋업 시 저장된 값 불러오기
         //let rv = settings.readNumber("redBalance")
         //let gv = settings.readNumber("greenBalance")
@@ -507,13 +508,14 @@ namespace braillebot {
                 basic.pause(500)
             }
             showColor(BLUE_KEY) // BLUE_KEY 대체
-            doBalance()
+            return doBalance()
         } else {
             redBalance = rv
             greenBalance = gv
             blueBalance = bv
             leftBalance = ls
             rightBalance = rs
+            return true
         }
 
     }
@@ -1185,7 +1187,11 @@ namespace braillebot {
 
         basic.pause(500)
 
-        checkWhiteBalance(0)
+        if(checkWhiteBalance()){
+            music.play(music.tonePlayable(262, music.beat(BeatFraction.Quarter)), music.PlaybackMode.UntilDone)
+        }else{
+            music.play(music.tonePlayable(523, music.beat(BeatFraction.Half)), music.PlaybackMode.UntilDone)
+        }
 
         pins.digitalWritePin(DigitalPin.P7, 0) // System LED OFF
 
