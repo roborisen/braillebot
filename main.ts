@@ -159,11 +159,7 @@ namespace braillebot {
         //% block="ORANGE"
         ORANGE_KEY = 7,
         //% block="PINK"
-        PINK_KEY = 8,
-        //% block="BLACK"
-        BLACK_KEY = 9,
-        //% block="WHITE"
-        WHITE_KEY = 10
+        PINK_KEY = 8
     }
 
     export enum Opening {
