@@ -78,7 +78,7 @@ namespace braillebot {
     const GREEN_KEY = 2
     const BLUE_KEY = 3 // AUTO
     const CYAN_KEY = 4
-    const MAGENTA_KEY = 5 // AUTO
+    const VIOLET_KEY = 5 // AUTO
     const YELLOW_KEY = 6
     const ORANGE_KEY = 7 // AUTO
     const PINK_KEY = 8
@@ -152,8 +152,8 @@ namespace braillebot {
         BLUE_KEY = 3,
         //% block="CYAN"
         CYAN_KEY = 4,
-        //% block="MAGENTA"
-        MAGENTA_KEY = 5,
+        //% block="VIOLET"
+        VIOLET_KEY = 5,
         //% block="YELLOW"
         YELLOW_KEY = 6,
         //% block="ORANGE"
@@ -261,7 +261,7 @@ namespace braillebot {
                 pins.digitalWritePin(greenPin, 0)
                 pins.digitalWritePin(bluePin, 0)
                 break
-            case MAGENTA_KEY:
+            case VIOLET_KEY:
                 pins.digitalWritePin(redPin, 0)
                 pins.digitalWritePin(greenPin, 1)
                 pins.digitalWritePin(bluePin, 0)
@@ -425,7 +425,7 @@ namespace braillebot {
             if (h >= 65 && h < 150) return GREEN_KEY    // 초록
             if (h >= 180 && h < 233 && Math.abs(s-v) > 0.2) return CYAN_KEY    // 청록
             if (h >= 230 && h < 260) return BLUE_KEY    // 파랑
-            if (h >= 260 && h < 325) return MAGENTA_KEY // 마젠타
+            if (h >= 260 && h < 325) return VIOLET_KEY // 마젠타
             if (h >= 325 && h < 350) return PINK_KEY    // 핑크
         }
 
