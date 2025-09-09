@@ -416,8 +416,8 @@ namespace braillebot {
             if (h >= 19 && h < 35) return ORANGE_KEY   // 주황
 //            if (h >= 50 && h < 65) return YELLOW_KEY   // 노랑
 //            if (h >= 65 && h < 150) return GREEN_KEY    // 초록
-            if (h >= 50 && h < 68) return YELLOW_KEY   // 노랑
-            if (h >= 68 && h < 150) return GREEN_KEY    // 초록
+            if (h >= 50 && h < 68) return YELLOW_KEY   // 노랑 //2025-09-10
+            if (h >= 68 && h < 150) return GREEN_KEY    // 초록 //2025-09-10
             if (h >= 180 && h < 233 && Math.abs(s-v) > 0.2) return CYAN_KEY    // 청록
             if (h >= 230 && h < 260) return BLUE_KEY    // 파랑
             if (h >= 260 && h < 325) return VIOLET_KEY // 마젠타
@@ -1028,6 +1028,7 @@ namespace braillebot {
             if (colorCount > 625) break  // Searching next color time limit 10 msec
         }
         motorSpeedControl(0, 0)
+        showColor(VIOLET_KEY) //2025-09-10
         basic.pause(50)
     }
 
