@@ -418,7 +418,7 @@ namespace braillebot {
 //            if (h >= 65 && h < 150) return GREEN_KEY    // 초록
             if (h >= 50 && h < 68) return YELLOW_KEY   // 노랑 //2025-09-10
             if (h >= 68 && h < 150) return GREEN_KEY    // 초록 //2025-09-10
-            if (h >= 180 && h < 233 && Math.abs(s-v) > 0.2) return CYAN_KEY    // 청록
+            if (h >= 180 && h < 238 && Math.abs(s-v) > 0.2) return CYAN_KEY    // 청록, 2025-09-10
             if (h >= 230 && h < 260) return BLUE_KEY    // 파랑
             if (h >= 260 && h < 325) return VIOLET_KEY // 마젠타
             if (h >= 325 && h < 350) return PINK_KEY    // 핑크
