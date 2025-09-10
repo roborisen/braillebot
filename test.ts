@@ -29,14 +29,17 @@ basic.forever(function () {
         braillebot.lineTrackingSkipAndNextColor()
     } else if (braillebot.isColorDetected(braillebot.inKey.PINK_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C4, braillebot.Note.C5, braillebot.Action.Action)
+        braillebot.showIcon(braillebot.Icons.GripperOpen)
         braillebot.gripperOpenBlock(braillebot.Opening.MovingOpen)
         braillebot.lineTrackingToNextColor()
     } else if (braillebot.isColorDetected(braillebot.inKey.VIOLET_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C5, braillebot.Note.C4, braillebot.Action.Action)
+        braillebot.showIcon(braillebot.Icons.GripperClose)
         braillebot.gripperCloseBlock(braillebot.Closing.MovingClose)
         braillebot.lineTrackingToNextColor()
     } else if (braillebot.isColorDetected(braillebot.inKey.GREEN_KEY)) {
         braillebot.playTwoNotes(braillebot.Note.C5, braillebot.Note.C5, braillebot.Action.Stop)
+        braillebot.showIcon(braillebot.Icons.Stop)
     } else {
 
     }
