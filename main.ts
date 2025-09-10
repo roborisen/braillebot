@@ -1028,7 +1028,6 @@ namespace braillebot {
             if (colorCount > 625) break  // Searching next color time limit 10 msec
         }
         motorSpeedControl(0, 0)
-        showColor(VIOLET_KEY) //2025-09-10
         basic.pause(50)
     }
 
@@ -1066,8 +1065,11 @@ namespace braillebot {
                 let existColor = meetColor()
                 if (existColor) {
                     basic.pause(30) //wait for reading position
-                    break
-                }
+
+                    //2025-09-10
+                    let tempColor = detectColorKey()
+                    if (tempColor > 0 && tempColor < 9) break
+               }
             }
 
             if (colorCount > 625) break  // Searching next color time limit 10 msec
