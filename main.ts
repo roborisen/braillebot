@@ -1020,7 +1020,10 @@ namespace braillebot {
                 let existColor = meetColor()
                 if (existColor) {
                     basic.pause(30) //wait for reading position
-                    break
+
+                    //2025-09-10
+                    let tempColor = detectColorKey()
+                    if (tempColor > 0 && tempColor < 9) break
                 }
             }
 
