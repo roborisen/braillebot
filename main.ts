@@ -7,7 +7,7 @@
 //% weight=100 color=#3333FF icon="\uf0fe"
 namespace braillebot {
 
-    // 핀 설정
+    // pin setting
 
 
     const redPin = DigitalPin.P13
@@ -95,8 +95,8 @@ namespace braillebot {
     const GCUBE_REQ_LINEBOARD_MELODY = 0x1B // ~ 2025-05-29
     const GCUBE_REQ_LINEBOARD_REBOOT = 0x1E // ~ 2025-05-05
     const GCUBE_CONTROL_COMMAND = 0x1F // ~ 2024-12-14
-    const GCUBE_GET_BOARD_ID = 0x10 // 보드의 ID 값 확인 요청
-    const GCUBE_LINE_BOARD_ID = 0x72 // 자동차형 모델 큐브 2개에 꽂혀 동작하는 트레이싱 전용 보드 ID : 0x72 ~ 2024-10-08
+    const GCUBE_GET_BOARD_ID = 0x10 // Board ID
+    const GCUBE_LINE_BOARD_ID = 0x72 // Braille Board ID
 
     export enum Note {
         //% block="C4"
@@ -118,67 +118,67 @@ namespace braillebot {
     }
 
     export enum Action {
-        //% block="Action"
+        //% block="action"
         Action = 0,
-        //% block="Stop"
+        //% block="stop"
         Stop = 1
     }
 
     export enum Icons {
-        //% block="Move forward"
+        //% block="move forward"
         MoveForward = 0,
-        //% block="Turn left"
+        //% block="turn left"
         TurnLeft = 1,
-        //% block="Turn right"
+        //% block="turn right"
         TurnRight = 2,
         //% block="U turn"
         UTurn = 3,
-        //% block="Stop"
+        //% block="stop"
         Stop = 4,
-        //% block="Gripper open"
+        //% block="gripper open"
         GripperOpen = 5,
-        //% block="Gripper close"
+        //% block="gripper close"
         GripperClose = 6
     }
 
     // Definition of Colorkey
     export enum inKey {
-        //% block="RED"
+        //% block="red"
         RED_KEY = 1,
-        //% block="GREEN"
+        //% block="green"
         GREEN_KEY = 2,
-        //% block="BLUE"
+        //% block="blue"
         BLUE_KEY = 3,
-        //% block="CYAN"
+        //% block="cyan"
         CYAN_KEY = 4,
-        //% block="VIOLET"
+        //% block="violet"
         VIOLET_KEY = 5,
-        //% block="YELLOW"
+        //% block="yellow"
         YELLOW_KEY = 6,
-        //% block="ORANGE"
+        //% block="orange"
         ORANGE_KEY = 7,
-        //% block="PINK"
+        //% block="pink"
         PINK_KEY = 8
     }
 
     export enum Opening {
-        //% block="Just open"
+        //% block="just open"
         JustOpen = 0,
-        //% block="Moving open"
+        //% block="moving open"
         MovingOpen = 1
     }
 
     export enum Closing {
-        //% block="Just close"
+        //% block="just close"
         JustClose = 0,
-        //% block="Moving close"
+        //% block="moving close"
         MovingClose = 1
     }
 
     export enum Checking {
-        //% block="Without skip"
+        //% block="without skip"
         None = 0,
-        //% block="Skip the near color"
+        //% block="skip the near color"
         Skip = 1
     }
 
@@ -762,7 +762,7 @@ namespace braillebot {
      * @param angle the angle of rotation
      * @param speed robot speed
      */
-    //% block="Rotate $degree degree with speed : $speed %"
+    //% block="rotate $degree degree with speed : $speed %"
     export function rotateBraillebot(speed: number, degree: number): void {
         rotateRobot(speed, degree)
     }
@@ -773,7 +773,7 @@ namespace braillebot {
      * @param distance robot distance
      * @param speed robot speed
      */
-    //% block="Move forward $distance cm with speed : $speed %"
+    //% block="move forward $distance cm with speed : $speed %"
     export function moveBraillebot(speed: number, distance: number): void {
         moveRobot(speed, distance)
     }
@@ -783,7 +783,7 @@ namespace braillebot {
      * @param left speed of left wheel of the robot
      * @param right speed of right wheel of the robot
      */
-    //% block="Set motor speed Left: $left % and Right: $right %"
+    //% block="set motor speed Left: $left % and Right: $right %"
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
     }
@@ -793,7 +793,7 @@ namespace braillebot {
      * Show the icon with the corresponding motion of the robot
      * @param icon Display the icon for the corresponding robot motion
      */
-    //% block="showIcon %icon"
+    //% block="show icon %icon"
     export function showIcon(icon: Icons): void {
         /*
             MoveForward = 0,
@@ -880,7 +880,7 @@ namespace braillebot {
      * @param note2 2nd tone
      * @param mode Melody for Action status or Stop status
      */
-    //% block="Play two tones 1st: %note1| 2nd: %note2  Mode: %mode"
+    //% block="play two tones 1st: %note1| 2nd: %note2  Mode: %mode"
     export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
 
         if (!melodyMode) return
@@ -907,7 +907,7 @@ namespace braillebot {
     /**
      * Set melody mode on
      */
-    //% block="Set Echo ON"
+    //% block="set echo on"
     export function setEchoOn(): void {
         melodyMode = true
     }
@@ -917,7 +917,7 @@ namespace braillebot {
      * Close gripper
      * @param mode Simple (Closing only) or Full (Moving + Closing)
      */
-    //% block="Gripper Close $mode"
+    //% block="gripper close $mode"
     export function gripperCloseBlock(mode: Closing): void {
         if (mode) {
             let detectionFlag = false
@@ -955,7 +955,7 @@ namespace braillebot {
      * Open gripper
      * @param mode Simple (Opening only) or Full (Moving + Opening)
      */
-    //% block="Gripper Open $mode"
+    //% block="gripper open $mode"
     export function gripperOpenBlock(mode: Opening): void {
         if (mode) {
             let detectionFlag = false
@@ -989,7 +989,7 @@ namespace braillebot {
     /**
      * Skip adjace color and start line tracking to the next color detection
      */
-    //% block="Line tracking while skipping adjacent colors"
+    //% block="line tracking while skipping adjacent colors"
     export function lineTrackingSkipAndNextColor(): void {
 
         colorCount = 0
@@ -1038,7 +1038,7 @@ namespace braillebot {
     /**
      * Line tracking to the next color detection
      */
-    //% block="Line tracking to the next color"
+    //% block="line tracking to the next color"
     export function lineTrackingToNextColor(): void {
 
         colorCount = 0;
@@ -1085,7 +1085,7 @@ namespace braillebot {
     /**
      * Stop the robot
      */
-    //% block="Stop"
+    //% block="stop"
     export function stop(): void {
         motorSpeedControl(0, 0)
     }
@@ -1105,7 +1105,7 @@ namespace braillebot {
     /**
      * Turn right
      */
-    //% block="Turn Right"
+    //% block="turn right"
     export function turnRight(): void {
         moveRobot(baseSpeed, moveDeviation)
         rotateRobot(baseSpeed, 55)
@@ -1116,7 +1116,7 @@ namespace braillebot {
     /**
      * Turn left
      */
-    //% block="Turn Left"
+    //% block="turn left"
     export function turnLeft(): void {
         moveRobot(baseSpeed, moveDeviation)
         rotateRobot(-1 * baseSpeed, 55)
@@ -1128,7 +1128,7 @@ namespace braillebot {
      * Turn on LED based on detected color
      * @param mode Simple (Opening only) or Full (Moving + Opening)
      */
-    //% block="Display LED color with $colorNumber"
+    //% block="display LED color with $colorNumber"
     export function showColorKey(colorNumber: number): void {
         if (0 < colorNumber && colorNumber < 9) showColor(colorNumber);
         if (oldColor != colorNumber) melodyAction = true
@@ -1137,7 +1137,7 @@ namespace braillebot {
     /**
      * When a color is detected
      */
-    //% block="If %color color is detected"
+    //% block="if %color color is detected"
     export function isColorDetected(color: inKey): boolean {
         if (colorKey == color) return true
         else return false
@@ -1147,7 +1147,7 @@ namespace braillebot {
     /**
      * Read color sensor
      */
-    //% block="Read Color Sensor"
+    //% block="read color sensor"
     export function readColorSensor(): void {
         colorKey = detectColorKey();
         if( colorKey > 0 && colorKey <9){ //2025-08-30
@@ -1160,7 +1160,7 @@ namespace braillebot {
     /**
      * Get detected color key
      */
-    //% block="Colorkey"
+    //% block="colorkey"
     export function getColorKey(): number {
         return colorKey
     }
@@ -1169,7 +1169,7 @@ namespace braillebot {
     /**
      * Initialize Braille bot
      */
-    //% block="Initialize Braille bot"
+    //% block="initialize Braille bot"
     export function setupBrailleBot(): void {
         pins.digitalWritePin(redPin, 1) // RED Off
         pins.digitalWritePin(greenPin, 1) // GREEN Off
