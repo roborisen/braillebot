@@ -763,7 +763,7 @@ namespace braillebot {
      * @param speed robot speed
      */
     //% block="rotate $degree degree with speed : $speed %"
-    export function rotateBraillebot(speed: number, degree: number): void {
+    export function rotateBrailleBot(speed: number, degree: number): void {
         rotateRobot(speed, degree)
     }
 
@@ -774,7 +774,7 @@ namespace braillebot {
      * @param speed robot speed
      */
     //% block="move forward $distance cm with speed : $speed %"
-    export function moveBraillebot(speed: number, distance: number): void {
+    export function moveBrailleBot(speed: number, distance: number): void {
         moveRobot(speed, distance)
     }
 
@@ -1137,7 +1137,7 @@ namespace braillebot {
     /**
      * When a color is detected
      */
-    //% block="if %color color is detected"
+    //% block=" %color color is detected"
     export function isColorDetected(color: inKey): boolean {
         if (colorKey == color) return true
         else return false
@@ -1167,9 +1167,9 @@ namespace braillebot {
 
 
     /**
-     * Initialize Braille bot
+     * Initialize BrailleBot
      */
-    //% block="initialize Braille bot"
+    //% block="initialize BrailleBot"
     export function setupBrailleBot(): void {
         pins.digitalWritePin(redPin, 1) // RED Off
         pins.digitalWritePin(greenPin, 1) // GREEN Off
