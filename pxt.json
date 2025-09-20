@@ -4,9 +4,7 @@
     "description": "With micro:bit and Braillebot, you can conduct various robot education and IoT project classes.",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "radio": "*",
-        "microphone": "*"
+        "core": "*"
     },
     "files": [
         "main.ts",
