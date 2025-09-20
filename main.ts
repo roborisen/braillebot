@@ -2,7 +2,7 @@
 // @config( microbit.boardVersion == 2 )
 
 /**
- * braillebot blocks
+ * braillebot blocks (beta)
  */
 //% weight=100 color=#3333FF icon="\uf0fe"
 namespace braillebot {
@@ -73,14 +73,14 @@ namespace braillebot {
     let br = 0
     let bg = 0
 
-    const RED_KEY = 1 // AUTO
-    const GREEN_KEY = 2
-    const BLUE_KEY = 3 // AUTO
-    const CYAN_KEY = 4
-    const VIOLET_KEY = 5 // AUTO
-    const YELLOW_KEY = 6
-    const ORANGE_KEY = 7 // AUTO
-    const PINK_KEY = 8
+    const RedKey = 1 // AUTO
+    const GreenKey = 2
+    const BlueKey = 3 // AUTO
+    const CyanKey = 4
+    const VioletKey = 5 // AUTO
+    const YellowKey = 6
+    const OrangeKey = 7 // AUTO
+    const PinkKey = 8
     const BLACK_KEY = 9
     const WHITE_KEY = 10
 
@@ -141,37 +141,37 @@ namespace braillebot {
         GripperClose = 6
     }
 
-    // Definition of Colorkey
-    export enum inKey {
+    // Definition of color key
+    export enum InKey {
         //% block="red"
-        RED_KEY = 1,
+        RedKey = 1,
         //% block="green"
-        GREEN_KEY = 2,
+        GreenKey = 2,
         //% block="blue"
-        BLUE_KEY = 3,
+        BlueKey = 3,
         //% block="cyan"
-        CYAN_KEY = 4,
+        CyanKey = 4,
         //% block="violet"
-        VIOLET_KEY = 5,
+        VioletKey = 5,
         //% block="yellow"
-        YELLOW_KEY = 6,
+        YellowKey = 6,
         //% block="orange"
-        ORANGE_KEY = 7,
+        OrangeKey = 7,
         //% block="pink"
-        PINK_KEY = 8
+        PinkKey = 8
     }
 
     export enum Opening {
-        //% block="just open"
+        //% block="open"
         JustOpen = 0,
-        //% block="moving open"
+        //% block="open and move"
         MovingOpen = 1
     }
 
     export enum Closing {
-        //% block="just close"
+        //% block="close"
         JustClose = 0,
-        //% block="moving close"
+        //% block="close and move"
         MovingClose = 1
     }
 
@@ -231,42 +231,42 @@ namespace braillebot {
     function showColor(color: number) {
         led.enable(false)
         switch (color) {
-            case RED_KEY:
+            case RedKey:
                 pins.digitalWritePin(redPin, 0)
                 pins.digitalWritePin(greenPin, 1)
                 pins.digitalWritePin(bluePin, 1)
                 break
-            case YELLOW_KEY:
+            case YellowKey:
                 pins.digitalWritePin(redPin, 0)
                 pins.digitalWritePin(greenPin, 0)
                 pins.digitalWritePin(bluePin, 1)
                 break
-            case GREEN_KEY:
+            case GreenKey:
                 pins.digitalWritePin(redPin, 1)
                 pins.digitalWritePin(greenPin, 0)
                 pins.digitalWritePin(bluePin, 1)
                 break
-            case BLUE_KEY:
+            case BlueKey:
                 pins.digitalWritePin(redPin, 1)
                 pins.digitalWritePin(greenPin, 1)
                 pins.digitalWritePin(bluePin, 0)
                 break
-            case ORANGE_KEY:
+            case OrangeKey:
                 pins.digitalWritePin(redPin, 0)
                 pins.digitalWritePin(greenPin, 0)
                 pins.digitalWritePin(bluePin, 0)
                 break
-            case VIOLET_KEY:
+            case VioletKey:
                 pins.digitalWritePin(redPin, 0)
                 pins.digitalWritePin(greenPin, 1)
                 pins.digitalWritePin(bluePin, 0)
                 break
-            case CYAN_KEY:
+            case CyanKey:
                 pins.digitalWritePin(redPin, 1)
                 pins.digitalWritePin(greenPin, 0)
                 pins.digitalWritePin(bluePin, 0)
                 break
-            case PINK_KEY:
+            case PinkKey:
                 pins.digitalWritePin(redPin, 1)
                 pins.digitalWritePin(greenPin, 1)
                 pins.digitalWritePin(bluePin, 1)
@@ -340,7 +340,7 @@ namespace braillebot {
             if (lineExist > 15) {
                 motorSpeedControl(0, 0)
                 lineExist = 0
-                showColor(RED_KEY)
+                showColor(RedKey)
             }
         } else {
             lineExist = 0
@@ -412,16 +412,16 @@ namespace braillebot {
 
         // 유색 판별
         if (s > 0.2) {
-            if (h >= 350 || h < 15) return RED_KEY      // 빨강
-            if (h >= 19 && h < 35) return ORANGE_KEY   // 주황
-//            if (h >= 50 && h < 65) return YELLOW_KEY   // 노랑
-//            if (h >= 65 && h < 150) return GREEN_KEY    // 초록
-            if (h >= 50 && h < 68) return YELLOW_KEY   // 노랑 //2025-09-10
-            if (h >= 68 && h < 150) return GREEN_KEY    // 초록 //2025-09-10
-            if (h >= 180 && h < 245 && Math.abs(s-v) > 0.2) return CYAN_KEY    // 청록, 2025-09-10
-            if (h >= 230 && h < 260) return BLUE_KEY    // 파랑
-            if (h >= 260 && h < 325) return VIOLET_KEY // 마젠타
-            if (h >= 325 && h < 350) return PINK_KEY    // 핑크
+            if (h >= 350 || h < 15) return RedKey      // 빨강
+            if (h >= 19 && h < 35) return OrangeKey   // 주황
+//            if (h >= 50 && h < 65) return YellowKey   // 노랑
+//            if (h >= 65 && h < 150) return GreenKey    // 초록
+            if (h >= 50 && h < 68) return YellowKey   // 노랑 //2025-09-10
+            if (h >= 68 && h < 150) return GreenKey    // 초록 //2025-09-10
+            if (h >= 180 && h < 245 && Math.abs(s-v) > 0.2) return CyanKey    // 청록, 2025-09-10
+            if (h >= 230 && h < 260) return BlueKey    // 파랑
+            if (h >= 260 && h < 325) return VioletKey // 마젠타
+            if (h >= 325 && h < 350) return PinkKey    // 핑크
         }
 
         return 0
@@ -506,7 +506,7 @@ namespace braillebot {
                 else pins.digitalWritePin(redPin, 1) // RED off
                 basic.pause(500)
             }
-            showColor(BLUE_KEY) // BLUE_KEY 대체
+            showColor(BlueKey) // BlueKey 대체
             return doBalance()
         } else {
             redBalance = rv
@@ -713,9 +713,9 @@ namespace braillebot {
                 motorSpeedControl(0, 0)
                 break
             } 
-            //else if (colorKey == GREEN_KEY) {
+            //else if (colorKey == GreenKey) {
             //    motorSpeedControl(0, 0)
-            //    showColor(GREEN_KEY)
+            //    showColor(GreenKey)
             //    break
             //}
 
@@ -880,7 +880,7 @@ namespace braillebot {
      * @param note2 2nd tone
      * @param mode Melody for Action status or Stop status
      */
-    //% block="play two tones 1st: %note1| 2nd: %note2  Mode: %mode"
+    //% block="play tones %note1| then %note2  %mode"
     export function playTwoNotes(note1: Note, note2: Note, mode: Action): void {
 
         if (!melodyMode) return
@@ -917,7 +917,7 @@ namespace braillebot {
      * Close gripper
      * @param mode Simple (Closing only) or Full (Moving + Closing)
      */
-    //% block="gripper close $mode"
+    //% block="gripper $mode"
     export function gripperCloseBlock(mode: Closing): void {
         if (mode) {
             let detectionFlag = false
@@ -955,7 +955,7 @@ namespace braillebot {
      * Open gripper
      * @param mode Simple (Opening only) or Full (Moving + Opening)
      */
-    //% block="gripper open $mode"
+    //% block="gripper $mode"
     export function gripperOpenBlock(mode: Opening): void {
         if (mode) {
             let detectionFlag = false
@@ -989,7 +989,7 @@ namespace braillebot {
     /**
      * Skip adjace color and start line tracking to the next color detection
      */
-    //% block="line tracking while skipping adjacent colors"
+    //% block="track the line while skipping adjacent colors"
     export function lineTrackingSkipAndNextColor(): void {
 
         colorCount = 0
@@ -1038,7 +1038,7 @@ namespace braillebot {
     /**
      * Line tracking to the next color detection
      */
-    //% block="line tracking to the next color"
+    //% block="track the line to the next color"
     export function lineTrackingToNextColor(): void {
 
         colorCount = 0;
@@ -1138,7 +1138,7 @@ namespace braillebot {
      * When a color is detected
      */
     //% block=" %color color is detected"
-    export function isColorDetected(color: inKey): boolean {
+    export function isColorDetected(color: InKey): boolean {
         if (colorKey == color) return true
         else return false
     }
@@ -1160,8 +1160,8 @@ namespace braillebot {
     /**
      * Get detected color key
      */
-    //% block="colorkey"
-    export function getColorKey(): number {
+    //% block="color key"
+    export function readColorKey(): number {
         return colorKey
     }
 
