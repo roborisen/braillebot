@@ -69,7 +69,7 @@ The information of BrailleBot is available in the following link
 
 ### ⚙️ Setup Block
 
-* **Setup braille bot**
+* **Setup BrailleBot**
   Initializes pins, sensor, white balance, and robot connection.
 
 ## 🧪 Color Codes
@@ -123,7 +123,7 @@ This extension provides blocks to control the BrailleBot robot with line tracing
 ## API Reference
 
 ### `setupBrailleBot()`
-**Block:** Initialize Braille bot  
+**Block:** Initialize BrailleBot  
 Initializes all robot systems, including color sensor, servos, communication ports, and calibration.
 
 ---
