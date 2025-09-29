@@ -92,6 +92,20 @@ Internally, the robot uses the following codes for color identification:
 * micro\:bit v2
 * G-Cube communication over UART
 * VEML6040 I2C Color Sensor
+G-Cube Serial #1 RX : P14 (Microbit TX)	
+G-Cube Serial #1 TX : P15 (Microbit RX)
+G-Cube Serial #2 RX : P12 (Microbit TX)
+G-Cube Serial #2 TX : P8 (Microbit RX)
+IR sensor Left :	P1
+IR sensor Right :	P2
+Indication LED :	P7
+Color LED - R :	P13
+Color LED - G :	P9
+Color LED - B :	P10
+RC servoe :		P16
+VEML6040 SDA :	P19
+VEML6040 SCL :	P20
+  
 
 ## 📦 Installation
 
