@@ -6,6 +6,10 @@ This is the official MakeCode extension for the **BrailleBot** robot, designed t
 
 This extension provides blocks for movement, color detection, PID line tracking, gripper control, melody playback, and more.
 
+The information of BrailleBot is available in the following link
+
+<BraillBot user guide>(https://drive.google.com/drive/u/0/folders/1hTqSkhzJzLy-aDYCrle0bNnitDoQOqee)
+
 ## 🧩 Blocks Overview
 
 ### 🚗 Movement Blocks
