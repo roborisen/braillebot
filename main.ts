@@ -29,7 +29,7 @@ namespace braillebot {
     let moveDeviation = 4
     let blindColor = 0
 
-    // PID 변수
+    // PID
     let setPoint = 0
     let pidInput = 0
     let pidOutput = 0
@@ -213,7 +213,7 @@ namespace braillebot {
         let low = buf.getUint8(0)
         let high = buf.getUint8(1)
 
-        return (high << 8) | low  // Little Endian (VEML6040 규격)
+        return (high << 8) | low  // Little Endian (VEML6040)
     }
 
     function readRed(): number {
@@ -287,19 +287,16 @@ namespace braillebot {
     function meetColor(): boolean {
         let returnKey = false
 
-        // VEML6040에서 RGB 값 읽기
         red = readRed()
         green = readGreen()
         blue = readBlue()
 
-        // 검정색이면 밸런스 카운트 증가
         if (red + green + blue < 1300) {
             balanceCount += 1
         } else {
             balanceCount = 0
         }
 
-        // 기준값 기반 정규화
         normred = red / redBalance
         normgreen = green / greenBalance
         normblue = blue / blueBalance
@@ -311,13 +308,11 @@ namespace braillebot {
         br = normblue / normred
         bg = normblue / normgreen
 
-        // 색상이 존재하는지 확인
 //        if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 0.9) {// 0.9->1.0 2025-09-10
         if (Math.abs(rg - gr) + Math.abs(rb - br) + Math.abs(gb - bg) > 1.2) {// 0.9->1.0 2025-09-10
             returnKey = true
         }
 
-        // 특정 조건 하에서 라인트래킹 종료
         if (blindColor == 0) {
             let tempColor = 0
 
@@ -351,14 +346,11 @@ namespace braillebot {
 
 
 
-    // ---- RGB -> HSV (캘리브레이션/정규화 포함) ----
     function rgbToHsv(rRaw: number, gRaw: number, bRaw: number): { h: number, s: number, v: number } {
-        // 1) 캘리브레이션 및 정규화
         const r = rRaw / redBalance
         const g = gRaw / greenBalance
         const b = bRaw / blueBalance
 
-        // 0~1 스케일(필요 시 최대값으로 나눌 수 있음; 여기선 비율만 사용)
         const cMax = Math.max(r, Math.max(g, b))
         const cMin = Math.min(r, Math.min(g, b))
         const diff = cMax - cMin
@@ -377,7 +369,7 @@ namespace braillebot {
         if (diff === 0) {
             hDeg = 0
         } else if (cMax === r) {
-            // ((g - b) / diff) % 6, 음수 처리
+            // ((g - b) / diff) % 6, 
             const t = (g - b) / diff
             const mod6 = ((t % 6) + 6) % 6
             hDeg = 60 * mod6
@@ -402,7 +394,7 @@ namespace braillebot {
         const s = hsv.s
         const v = hsv.v
 
-        // 검정/흰색 우선 판별
+        // black & white
         if (s > 0.05 && s < 0.20 && v < 0.35) {
             return BLACK_KEY
         }
@@ -410,18 +402,18 @@ namespace braillebot {
             return WHITE_KEY
         }
 
-        // 유색 판별
+        // color detection
         if (s > 0.2) {
-            if (h >= 350 || h < 15) return RedKey      // 빨강
-            if (h >= 19 && h < 35) return OrangeKey   // 주황
-//            if (h >= 50 && h < 65) return YellowKey   // 노랑
-//            if (h >= 65 && h < 150) return GreenKey    // 초록
-            if (h >= 50 && h < 68) return YellowKey   // 노랑 //2025-09-10
-            if (h >= 68 && h < 150) return GreenKey    // 초록 //2025-09-10
+            if (h >= 350 || h < 15) return RedKey      // 
+            if (h >= 19 && h < 35) return OrangeKey   // 
+//            if (h >= 50 && h < 65) return YellowKey   // 
+//            if (h >= 65 && h < 150) return GreenKey    // 
+            if (h >= 50 && h < 68) return YellowKey   //  //2025-09-10
+            if (h >= 68 && h < 150) return GreenKey    //  //2025-09-10
             if (h >= 180 && h < 245 && Math.abs(s-v) > 0.2) return CyanKey    // 청록, 2025-09-10
-            if (h >= 230 && h < 260) return BlueKey    // 파랑
-            if (h >= 260 && h < 325) return VioletKey // 마젠타
-            if (h >= 325 && h < 350) return PinkKey    // 핑크
+            if (h >= 230 && h < 260) return BlueKey    // 
+            if (h >= 260 && h < 325) return VioletKey // 
+            if (h >= 325 && h < 350) return PinkKey    // 
         }
 
         return 0
@@ -460,7 +452,7 @@ namespace braillebot {
         rs /= 5
 
         if (whitecheck) {
-            // EEPROM 대신 settings 사용
+            // EEPROM settings
             //settings.writeNumber("redBalance", rv)
             //settings.writeNumber("greenBalance", gv)
             //settings.writeNumber("blueBalance", bv)
@@ -483,7 +475,6 @@ namespace braillebot {
 
 
     function checkWhiteBalance():boolean {
-        // 초기 셋업 시 저장된 값 불러오기
         //let rv = settings.readNumber("redBalance")
         //let gv = settings.readNumber("greenBalance")
         //let bv = settings.readNumber("blueBalance")
@@ -641,7 +632,7 @@ namespace braillebot {
         let timeout = 0
 
         while (!(cube1Connected && cube2Connected)) {
-            // 큐브1 (P14: RX, P15: TX)
+            // Cube1 (P14: RX, P15: TX)
             if (!cube1Connected) {
                 pins.setPull(DigitalPin.P14, PinPullMode.PullUp)
                 let pinState1 = pins.digitalReadPin(DigitalPin.P14)
@@ -662,9 +653,9 @@ namespace braillebot {
                 }
             }
 
-            basic.pause(50) // 너무 빠른 루프 방지
+            basic.pause(50) //
 
-            // 큐브2 (P12: RX, P8: TX)
+            // Cube2 (P12: RX, P8: TX)
             if (!cube2Connected) {
                 pins.setPull(DigitalPin.P12, PinPullMode.PullUp)
                 let pinState2 = pins.digitalReadPin(DigitalPin.P12)
@@ -685,10 +676,10 @@ namespace braillebot {
                 }
             }
 
-            basic.pause(50) // 너무 빠른 루프 방지
+            basic.pause(50) // 
 
             timeout++
-            if (timeout > 200) {// 예: 20초 후에도 연결 안 되면 실패
+            if (timeout > 200) {// timeout 20sec
                 break
             }
         }
@@ -719,7 +710,7 @@ namespace braillebot {
             //    break
             //}
 
-            // IR 센서 라인 감지
+            // IR sensor detect
             let lineValue = 0
             if (direction == 1) {
                 lineValue = pins.map(pins.analogReadPin(AnalogPin.P1), leftBalance, 1023, 0, 1023)
