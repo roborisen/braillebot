@@ -103,8 +103,8 @@ Internally, the robot uses the following codes for color identification:
 * *Color LED - G :	P9
 * *Color LED - B :	P10
 * *RC servoe :		P16
-* *VEML6040 SDA :	P19
-* *VEML6040 SCL :	P20
+* *VEML6040 SDA :	P20
+* *VEML6040 SCL :	P19
   
 
 ## 📦 Installation
