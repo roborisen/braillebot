@@ -752,7 +752,7 @@ namespace braillebot {
      * @param angle the angle of rotation
      * @param speed robot speed
      */
-    //% block="rotate $degree degree with speed : $speed \\%"
+    //% block="rotate $degree degree with speed  $speed \\%"
     export function rotateBrailleBot(speed: number, degree: number): void {
         rotateRobot(speed, degree)
     }
@@ -763,7 +763,7 @@ namespace braillebot {
      * @param distance robot distance
      * @param speed robot speed
      */
-    //% block="move forward $distance cm with speed : $speed \\%"
+    //% block="move forward $distance cm with speed  $speed \\%"
     export function moveBrailleBot(speed: number, distance: number): void {
         moveRobot(speed, distance)
     }
@@ -773,7 +773,7 @@ namespace braillebot {
      * @param left speed of left wheel of the robot
      * @param right speed of right wheel of the robot
      */
-    //% block="set motor speed left: $left \\% and right: $right \\%"
+    //% block="set motor speed left $left \\% and right $right \\%"
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
     }
