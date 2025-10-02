@@ -10,6 +10,11 @@ The information of BrailleBot is available in the following link
 
 <BraillBot user guide>(https://drive.google.com/drive/u/0/folders/1hTqSkhzJzLy-aDYCrle0bNnitDoQOqee)
 
+And the BrailleBot is available in
+
+<BraillBot product link>(https://drive.google.com/drive/u/0/folders/1hTqSkhzJzLy-aDYCrle0bNnitDoQOqee](https://global.gmarket.co.kr/item?goodscode=4549651616)
+
+
 ## 🧩 Blocks Overview
 
 ### 🚗 Movement Blocks
