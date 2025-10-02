@@ -1,8 +1,7 @@
 
-// @config( microbit.boardVersion == 2 )
 
 /**
- * braillebot blocks (beta)
+ * braillebot blocks
  */
 //% weight=100 color=#3333FF icon="\uf0fe"
 namespace braillebot {
@@ -131,7 +130,7 @@ namespace braillebot {
         TurnLeft = 1,
         //% block="turn right"
         TurnRight = 2,
-        //% block="U turn"
+        //% block="u turn"
         UTurn = 3,
         //% block="stop"
         Stop = 4,
@@ -774,7 +773,7 @@ namespace braillebot {
      * @param left speed of left wheel of the robot
      * @param right speed of right wheel of the robot
      */
-    //% block="set motor speed Left: $left % and Right: $right %"
+    //% block="set motor speed left: $left % and right: $right %"
     export function setMotorSpeed(left: number, right: number): void {
         motorSpeedControl(left, right)
     }
@@ -1083,9 +1082,9 @@ namespace braillebot {
 
 
     /**
-     * Take U turn
+     * Take u turn
      */
-    //% block="U turn"
+    //% block="u turn"
     export function uTurn(): void {
         moveRobot(baseSpeed, 2)
         rotateRobot(-50, 120)
