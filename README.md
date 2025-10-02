@@ -8,6 +8,8 @@ This extension provides blocks for movement, color detection, PID line tracking,
 
 The information of BrailleBot is available in the following link
 
+https://github.com/roborisen/braillebot/BrailleBot_UserGuide.pdf
+
 <BraillBot user guide>(https://drive.google.com/drive/u/0/folders/1hTqSkhzJzLy-aDYCrle0bNnitDoQOqee)
 
 And the BrailleBot is available in
