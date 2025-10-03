@@ -943,7 +943,7 @@ namespace braillebot {
 
     /**
      * Open gripper
-     * @param mode Simple (Opening only) or Full (Moving + Opening)
+     * @param mode open or open & move
      */
     //% block="gripper $mode"
     export function gripperOpenBlock(mode: Opening): void {
