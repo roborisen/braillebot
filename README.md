@@ -110,6 +110,12 @@ Internally, the robot uses the following codes for color identification:
 * *RC servoe :		P16
 * *VEML6040 SDA :	P20
 * *VEML6040 SCL :	P19
+
+## 🛠️ Known Issue: Chrome/Edge v141 Rendering Bug
+
+When using this extension in the MakeCode editor, you may encounter broken simulator accessory rendering on Chrome or Edge version 141.
+* Works correctly on Chrome/Edge v140 and earlier
+* Works correctly on Firefox and Safari
   
 
 ## 📦 Installation
