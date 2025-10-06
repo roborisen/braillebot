@@ -1161,6 +1161,8 @@ namespace braillebot {
      */
     //% block="initialize BrailleBot"
     export function setupBrailleBot(): void {
+        led.enable(false)
+
         pins.digitalWritePin(redPin, 1) // RED Off
         pins.digitalWritePin(greenPin, 1) // GREEN Off
         pins.digitalWritePin(bluePin, 1) // BLUE Off
@@ -1190,7 +1192,8 @@ namespace braillebot {
         allConnected = true
 
         basic.pause (500)
-
+        
+        led.enable(true)
     }
 
 
