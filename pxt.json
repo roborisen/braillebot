@@ -1,7 +1,7 @@
 {
     "name": "braillebot",
     "version": "1.0.75",
-    "description": "With micro:bit and Braillebot, you can conduct various robot education and IoT project classes. -beta",
+    "description": "Braillebot extension code for micro:bit -beta",
     "license": "MIT",
     "dependencies": {
         "core": "*"
