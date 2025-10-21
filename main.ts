@@ -403,6 +403,7 @@ namespace braillebot {
 
         // color detection
         if (s > 0.2) {
+/*            
             if (h >= 350 || h < 15) return RedKey      // 
             if (h >= 19 && h < 35) return OrangeKey   // 
 //            if (h >= 50 && h < 65) return YellowKey   // 
@@ -413,6 +414,17 @@ namespace braillebot {
             if (h >= 230 && h < 260) return BlueKey    // 
             if (h >= 260 && h < 325) return VioletKey // 
             if (h >= 325 && h < 350) return PinkKey    // 
+*/
+            if ((h >= 350 && s > 0.3) || (h < 15 && s > 0.35)) return RedKey      //
+            if (h >= 19 && h < 35 && s > 0.35) return OrangeKey   //
+            if (h >= 50 && h < 70 && v > 0.66) return YellowKey   //  //2025-09-10
+            if (h >= 65 && h < 150) return GreenKey    //  //2025-09-10
+            if (h >= 180 && h < 237 && Math.abs(s - v) > 0.2) return CyanKey    // 청록, 2025-09-10
+            if (h >= 225 && h < 260) return BlueKey    // 
+            if (h >= 260 && h < 325 && v > 0.2) return VioletKey //
+            if (h >= 325 && h < 350 && s > 0.3) return PinkKey    //
+
+
         }
 
         return 0
