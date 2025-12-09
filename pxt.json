@@ -1,6 +1,6 @@
 {
     "name": "braillebot",
-    "version": "1.0.77",
+    "version": "1.0.78",
     "description": "Braillebot extension code for micro:bit -beta",
     "license": "MIT",
     "dependencies": {
