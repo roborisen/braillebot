@@ -92,10 +92,10 @@ namespace braillebot {
     const GCUBE_REQ_LINEBOARD_GRIPPER = 0x18 // ~ 2024-11-22
     const GCUBE_REQ_LINEBOARD_MOVETOGRID = 0x19 // ~ 2024-11-26
     const GCUBE_REQ_LINEBOARD_MELODY = 0x1B // ~ 2025-05-29
-    const GCUBE_REQ_LINEBOARD_REBOOT = 0x1E // ~ 2025-05-05
     const GCUBE_CONTROL_COMMAND = 0x1F // ~ 2024-12-14
     const GCUBE_GET_BOARD_ID = 0x10 // Board ID
     const GCUBE_LINE_BOARD_ID = 0x72 // Braille Board ID
+    //const GCUBE_LINE_BOARD_ID = 0x73 // Braille Board ID 2025-12-10 reserved for the future
 
     export enum Note {
         //% block="C4"
@@ -179,6 +179,35 @@ namespace braillebot {
         None = 0,
         //% block="skip the near color"
         Skip = 1
+    }
+
+
+    function startUpsetWatcher(): void {
+
+        control.inBackground(function () {
+            let wasUpsideDown = false
+
+            while (true) {
+                // 마이크로비트의 앞/뒤 기울기 (Pitch) 값을 읽음
+                // 대략 -180 ~ +180 도 범위
+                let pitch = input.rotation(Rotation.Pitch)
+
+                // 임계값 예시:
+                // |pitch| 이 140도 이상이면 "거의 뒤집혔다"고 판단
+                let upsideDown = Math.abs(pitch) > 140
+
+                // 막 뒤집힌 순간에만 모터 정지 명령 실행
+                if (upsideDown && !wasUpsideDown && allConnected==true) {
+                    motorSpeedControl(0, 0)
+                    // 필요하면 디버그용 로그
+                }
+
+                wasUpsideDown = upsideDown
+
+                // 1초마다 검사
+                basic.pause(1000)
+            }
+        })
     }
 
 
@@ -1206,6 +1235,8 @@ namespace braillebot {
         basic.pause (500)
         
         led.enable(true)
+
+        startUpsetWatcher() //2025-12-10
     }
 
 
